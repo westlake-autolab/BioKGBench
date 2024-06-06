@@ -1,2 +1,2 @@
-# BKGAgent-Benchmark
-Agent4S-BioKG: A Knowledge Graph Checking Benchmark of AI Agent for Biomedical Science
+# Agent4S-BioKG
+A Knowledge Graph Checking Benchmark of AI Agent for Biomedical Science.
