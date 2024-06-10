@@ -1,0 +1,7 @@
+jsonlines
+langchain==0.1.16
+langchain-core==0.1.45
+langchain-community==0.0.34
+loguru
+numpy
+pandas
