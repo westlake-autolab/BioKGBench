@@ -9,8 +9,8 @@ from urllib.parse import quote, unquote
 import sys
 import re
 from datetime import datetime
-from src.kg import kg_utils
-from src.kg.graphdb_connector import connector
+from .. import kg_utils
+from ..graphdb_connector import connector
 
 
 START_TIME = datetime.now()

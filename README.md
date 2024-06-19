@@ -25,11 +25,16 @@ Agent4S-BioKG
 |   |-- kgcheck                                     # dataset for KGCheck experiment
 |   |-- kgqa                                        # dataset for KGQA experiment
 |   `-- scv                                         # dataset for SCV experiment
-`-- tasks                                           # easy tasks and hard task
-    |-- KGCheck
-    |-- KGQA
-    |-- SCV
+`-- tasks
+    |-- KGCheck                                     # KGCheck task
+    |-- KGQA                                        # KGQA task
+    |-- SCV                                         # SCV task
     `-- utils
+        |-- agent_fucs                              # agent functions
+        |-- embedding                               # embedding model starter for scv task
+        |-- kg                                      # kg builder and kg connecotr
+        |-- constant_.py                            # constant variables
+        `-- threadpool_concurrency_.py              # threadpool concurrency method
 ```
 
 ## Overview
@@ -90,6 +95,11 @@ cd data
 git lfs pull
 ```
 
+**Building Knowledge Graph**:
+```bash
+
+```
+
 **Running Baseline**:
 * Config  
 You need to modify the configuration file in the `config` folder, including `kg_config.yml`, and `llm_config.yml`.
@@ -99,12 +109,15 @@ You need to modify the configuration file in the `config` folder, including `kg_
   python -m tasks.KGCheck.team
   ```
 * `KGQA`:
+  **update task config**: tasks/KGQA/configs/tasks/kg.yaml, change data path as your own path.  
+  **make agent config file**: tasks/KGQA/configs/agents/*.yaml, choose one of these agents or make your own agent.
+  **update llm config**: tasks/KGQA/configs/assignments/default.yaml, change agent if you make you won.
   ```bash
-  python -m src.start_task -a
+  python -m tasks.KGQA.start_task -a
   ```
   Open another terminal and run:
   ```bash
-  python -m src.assigner
+  python -m tasks.KGQA.assigner
   ```
 * `SCV`:
   ```bash

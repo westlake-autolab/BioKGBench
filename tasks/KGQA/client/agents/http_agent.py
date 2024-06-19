@@ -5,8 +5,8 @@ import warnings
 import requests
 from urllib3.exceptions import InsecureRequestWarning
 
-from src.typings import *
-from src.utils import *
+from ...typings import *
+from ...utils import *
 from ..agent import AgentClient
 
 old_merge_environment_settings = requests.Session.merge_environment_settings
