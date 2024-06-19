@@ -1,6 +1,6 @@
 from langchain.tools import tool
 
-from .graphdb_connector import connector
+from ...utils.kg.graphdb_connector import connector
 
 
 driver = connector.getGraphDatabaseConnectionConfiguration()

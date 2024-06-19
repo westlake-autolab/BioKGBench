@@ -1,5 +1,5 @@
 version: 1.0
-kg_directory: "/root/BioKGBench/src/kg"
+kg_directory: "tasks/utils/kg"
 
 # data_directory: "/root/CKG/data"
 # archive_directory: "/root/CKG/data/archive"
@@ -15,9 +15,9 @@ kg_directory: "/root/BioKGBench/src/kg"
 # log_directory: "/root/CKG/log"
 
 
-imports_databases_directory: "/root/BioKGBench/src/kg/data/databases"
-imports_ontologies_directory: "/root/BioKGBench/src/kg/data/ontologies"
-report_manager_log: "/root/BioKGBench/src/kg/config/report_manager_log.config"
-graphdb_connector_log: "/root/BioKGBench/src/kg/config/graphdb_connector_log.config"
-graphdb_builder_log: "/root/BioKGBench/src/kg/config/graphdb_builder_log.config"
-analytics_factory_log: "/root/BioKGBench/src/kg/config/analytics_factory_log.config"
+imports_databases_directory: "data/bioKG/databases"
+imports_ontologies_directory: "data/bioKG/ontologies"
+graphdb_connector_log: "result/bioKG/graphdb_connector_log.config"
+graphdb_builder_log: "result/bioKG/graphdb_builder_log.config"
+# report_manager_log: "/root/BioKGBench/src/kg/config/report_manager_log.config"
+# analytics_factory_log: "/root/BioKGBench/src/kg/config/analytics_factory_log.config"

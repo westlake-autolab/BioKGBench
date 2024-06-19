@@ -17,7 +17,7 @@ def read_yaml(yaml_file):
 
 def read_kg_config(key=None):
     cwd = os.path.dirname(os.path.abspath(__file__))
-    config_file = os.path.join(cwd, 'config/kg_config.yml')
+    config_file = os.path.join(cwd, '../../../config/kg_config.yml')
     content = read_yaml(config_file)
     if key is not None:
         if key in content:
@@ -54,7 +54,7 @@ def setup_logging(path='log.config', key=None):
         except Exception:
             logging.basicConfig(level=logging.DEBUG)
     else:
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(key)
 
     return logger
