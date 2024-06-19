@@ -54,12 +54,15 @@ The dataset can be found in the [release]. The dataset is divided into three par
 
 * `KGCheck`:
 ```bash
+# TODO
 ```
 * `KGQA`:
 ```bash
+#TODO
 ```
 * `SCV`:
 ```bash
+#TODO
 ```
 
 ## Acknowledgement
