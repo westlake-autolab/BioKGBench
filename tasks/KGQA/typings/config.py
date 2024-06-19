@@ -5,7 +5,7 @@ from typing import Dict, List, Union
 
 from pydantic import BaseModel, validator
 
-from src.utils import ColorMessage
+from ..utils import ColorMessage
 from .general import InstanceFactory, Assignment
 
 
