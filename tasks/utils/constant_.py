@@ -1,12 +1,14 @@
-DOCUMENT_SET_NAME = "fact_check"
+import os
+
+FACT_CHECK = "fact_check"
 
 USERNAME = "sqma"
 PASSWORD = "123456"
 
 DEFAULT_MODEL_ENDPOINT = "http://10.0.1.194:7010/v1"
-KG_BASE_URL = "http://10.18.155.13:7487"
-AUTH_URL = "http://10.0.1.197:9992"
-BASE_URL = "http://10.0.1.196:3000/api/"
+KG_BASE_URL = os.environ.get("KG_BASE") or "http://172.16.55.90:7625"
+AUTH_URL = os.environ.get("AUTH_BASE") or "http://10.0.1.197:9992"
+BASE_URL = os.environ.get("SERVER_BASE") or "http://172.17.0.1:3000/api/"
 
 REFUTES_OPTION = ["UNSUPPORTED", "UNSUPPORT", "UNSUPPORTS", "UNSUPPORTE", "REFUTED", "REFUTES"]
 SUPPORTS_OPTION = ["SUPPORTED", "SUPPORTS"]

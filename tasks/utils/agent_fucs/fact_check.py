@@ -3,7 +3,7 @@ from langchain.tools import tool
 
 from ..constant_ import ERROR_RETRY_TIMES
 from ..constant_ import DEFAULT_MODEL_ENDPOINT
-from ..constant_ import DOCUMENT_SET_NAME
+from ..constant_ import FACT_CHECK
 from .danswerAPI_ import fact_check, get_model_name, search_doc
 
 
@@ -21,7 +21,7 @@ def validate_claim_by_rag(claim, api_key:str="sk-cairi", api_type:str="local", e
     # log = {"claim": claim}
     log = {}
     while 1:
-        answer = fact_check(query=claim, token=token, api_key=api_key, api_type=api_type, llm_name=llm_name, llm_endpoint=endpoint, document_set=[DOCUMENT_SET_NAME], num_hits=10)
+        answer = fact_check(query=claim, token=token, api_key=api_key, api_type=api_type, llm_name=llm_name, llm_endpoint=endpoint, document_set=[FACT_CHECK], num_hits=10)
         if answer['error_msg']:
             error_msg = answer['error_msg']
             console_logger.error(f"{claim} {error_cnt} {error_msg}")
