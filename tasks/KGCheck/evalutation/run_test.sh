@@ -22,7 +22,7 @@ do
     instruction=$(python3 ./helper.py "$i")
     printf "\n%s\n" "$instruction" >> "$output_path"
     echo "Instruction for step $i: $instruction"
-    /root/mambaforge/envs/autogen/bin/python3.11 ./team.py "$instruction"
+    python3 ./team.py "$instruction"
     progress_bar $((i+1)) $total_num
     echo ""
 done
