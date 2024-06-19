@@ -67,7 +67,7 @@ def read_config():
     try:
         kg_config = kg_utils.read_kg_config()
         cwd = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.join(cwd, '../../../../config/connector_config.yml')
+        path = os.path.join(cwd, '../../../../config/kg_config.yml')
         config = kg_utils.get_configuration(path)
         log_config = kg_config['graphdb_connector_log']
         # logger = kg_utils.setup_logging(log_config, key="connector")

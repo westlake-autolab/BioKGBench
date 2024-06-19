@@ -1,20 +1,18 @@
-from typing import Annotated, Sequence, TypedDict, List, Union, Tuple, Dict
+import argparse
+import json
 from langgraph.graph import StateGraph, END
 from langchain_core.messages import BaseMessage
-import operator
-import re
-import json
 import logging
+import operator
+import os
+import re
+from tqdm import tqdm
+from typing import Annotated, Sequence, TypedDict, List, Union, Tuple, Dict
 
 from .agents import leader_chain
 from .agents import kg_chain
 from .agents import validation_chain
 from .tool_box import tool_node
-
-
-log_file = ''
-
-logging.basicConfig(filename=log_file, level=logging.INFO, filemode='a')
 
 
 # helper utilities
@@ -60,27 +58,21 @@ def parse_content(raw: List[Tuple[str, str]]) -> List[Dict[str, str]]:
     return res
 
 def read_write(data, path):
-    with open(path, 'r', encoding='utf-8') as f:
-        try:
-            existing = json.load(f)
-        except json.JSONDecodeError:
-            existing = []
-        existing.append(data)
-    with open(path, 'w', encoding='utf-8') as ff:
-        json.dump(existing, ff)
+    with open(path, 'a+', encoding='utf-8') as ff:
+        json.dump(data, ff)
 
 def save_answer(m_le, m_kg, m_va):
-    fp_leader = ''
-    fp_kg = ''
-    fp_validation = ''
     
     mm_le = parse_content(m_le)
     mm_kg = parse_content(m_kg)
     mm_va = parse_content(m_va)
+
+    print(mm_le, mm_kg, mm_va)
+    raise SystemExit
     
-    read_write(mm_le, fp_leader)
-    read_write(mm_kg, fp_kg)
-    read_write(mm_va, fp_validation)
+    # read_write(mm_le, fp_leader)
+    # read_write(mm_kg, fp_kg)
+    # read_write(mm_va, fp_validation)
 
 class assist_agent:
     '''
@@ -164,10 +156,10 @@ validation_assistant_router = {"call_tool": "call_tool", "team_leader": "team_le
 tool_router = {"kg_agent": "kg_agent", "validation_agent": "validation_agent"}
 
 
-def main():
+def main(task: str):
     # task = sys.argv[1]
-    task = input("task: ")
-    print(task)
+    # task = input("task: ")
+    # print(task)
 
     # define agents
     team_leader = leader_agent('team_leader', leader_chain)
@@ -225,4 +217,24 @@ def main():
                             validation_agent.memory)
 
 if __name__ == '__main__':
-    main()
+
+    os.makedirs('results/kgcheck', exist_ok=True)
+    
+    fp_leader = ''
+    fp_kg = ''
+    fp_validation = ''
+
+    parser = argparse.ArgumentParser(description='Task KGCheck')
+    parser.add_argument('--data_file', '-d', type=str, help='The path to the data file')
+    parser.add_argument('--log_file', '-l', type=str, default='results/kgcheck/log.txt', help='The path to the log file')
+
+    args = parser.parse_args()
+
+    logging.basicConfig(filename=args.log_file, level=logging.INFO, filemode='a')
+
+    with open(args.data_file, 'r') as file:
+        data = json.load(file)
+
+    for element in tqdm(data):
+        instruction = element['instruction']
+        main(instruction)

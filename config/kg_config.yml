@@ -1,4 +1,15 @@
 version: 1.0
+#Database configuration
+# db_url: "172.16.55.90"
+db_url: "10.18.155.13"
+# dbPort = 7688  # Production environment
+# db_port: 9987  # Test environment
+db_port: 7687  # Test environment
+# db_port: 7474
+db_user: "neo4j"
+# db_password: "newneo4j"
+db_password: "Neo4j"
+
 kg_directory: "tasks/utils/kg"
 
 # data_directory: "/root/CKG/data"

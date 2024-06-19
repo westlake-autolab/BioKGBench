@@ -17,6 +17,9 @@ In contrast to traditional evaluation benchmark that only focuses on factual QA,
 Agent4S-BioKG
 |-- assets
 |   `-- img
+|-- config
+|   |-- kg_config.yml                               # config for build kg and connect to neo4g
+|   `-- llm_config.yml                              # config for llm
 |-- data
 |   |-- bioKG                                       # dataset for build kg
 |   |-- kgcheck                                     # dataset for KGCheck experiment
@@ -88,20 +91,25 @@ git lfs pull
 ```
 
 **Running Baseline**:
+* Config  
+You need to modify the configuration file in the `config` folder, including `kg_config.yml`, and `llm_config.yml`.
 
 * `KGCheck`:
-```bash
-cd tasks/KGCheck
-python -m tasks.KGCheck.team
-```
+  ```bash
+  python -m tasks.KGCheck.team
+  ```
 * `KGQA`:
-```bash
-#TODO
-```
+  ```bash
+  python -m src.start_task -a
+  ```
+  Open another terminal and run:
+  ```bash
+  python -m src.assigner
+  ```
 * `SCV`:
-```bash
-#TODO
-```
+  ```bash
+  #TODO
+  ```
 
 ## Acknowledgement
 
