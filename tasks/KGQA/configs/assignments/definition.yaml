@@ -1,0 +1,10 @@
+definition:
+  task:
+    overwrite:
+      module: tasks.KGQA.client.TaskClient
+      parameters:
+        controller_address: "http://localhost:7624/api"  # 7624 is for debug, 7623 is for formal usage.
+    import: ../tasks/kg.yaml
+  agent:
+    import:
+      - ../agents/api_agents.yaml

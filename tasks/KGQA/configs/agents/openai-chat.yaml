@@ -1,0 +1,13 @@
+module: tasks.KGQA.client.agents.HTTPAgent
+parameters:
+  url: https://ai4mtest1.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview
+  headers:
+    Content-Type: application/json
+    api-key: <% PUT-YOUR-OPENAI-KEY-HERE %>
+  body:
+    temperature: 0
+  prompter:
+    name: role_content_dict
+    args:
+      agent_role: assistant
+  return_format: "{response[choices][0][message][content]}"

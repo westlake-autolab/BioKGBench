@@ -1,0 +1,13 @@
+module: tasks.KGQA.client.agents.HTTPAgent
+parameters:
+  url: https://api.anthropic.com/v1/messages
+  headers:
+    Content-Type: application/json
+    Authorization: <% PUT-YOUR-CLAUDE-KEY-HERE %>
+  body:
+    temperature: 0
+  prompter:
+    name: claude
+    # args:
+    #   agent_role: assistant
+  return_format: "{response[choices][0][message][content]}"
