@@ -105,8 +105,9 @@ git lfs pull
 You need to modify the configuration file in the `config` folder, including `kg_config.yml`, and `llm_config.yml`.
 
 * `KGCheck`:
+  **--data_file**: the path of the dataset file.
   ```bash
-  python -m tasks.KGCheck.team
+  python -m tasks.KGCheck.team --data_file data/kgcheck/dev.json
   ```
 * `KGQA`:
   **update task config**: tasks/KGQA/configs/tasks/kg.yaml, change data path as your own path.  
