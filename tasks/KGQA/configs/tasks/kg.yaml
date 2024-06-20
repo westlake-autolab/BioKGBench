@@ -2,7 +2,6 @@ default:
   module: "tasks.KGQA.server.tasks.knowledgegraph.KnowledgeGraph"
   parameters:
     round: 15
-    # sparql_url: "http://164.107.116.56:3093/sparql"  # TODO: change here...
 
 kg-dev:
   parameters:
