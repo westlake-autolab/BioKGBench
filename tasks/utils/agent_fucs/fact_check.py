@@ -2,13 +2,13 @@ from loguru import logger as console_logger
 from langchain.tools import tool
 
 from ..constant_ import ERROR_RETRY_TIMES
-from ..constant_ import DEFAULT_MODEL_ENDPOINT
+from ..constant_ import DEFAULT_API_KEY, DEFAULT_ENDPOINT, DEFAULT_MODEL
 from ..constant_ import FACT_CHECK
-from .danswerAPI_ import fact_check, get_model_name, search_doc
+from .danswerAPI_ import fact_check, search_doc
 
 
 @tool
-def validate_claim_by_rag(claim, api_key:str="sk-cairi", api_type:str="local", endpoint:str=DEFAULT_MODEL_ENDPOINT) -> dict:
+def validate_claim_by_rag(claim) -> dict:
     '''
     validate_claim_by_rag(claim) -> dict
     Validate the claim by RAG.
@@ -16,12 +16,11 @@ def validate_claim_by_rag(claim, api_key:str="sk-cairi", api_type:str="local", e
     '''
     # token = getToken(USERNAME, PASSWORD)
     token = ""
-    llm_name = get_model_name(endpoint) 
     error_cnt = 0
     # log = {"claim": claim}
     log = {}
     while 1:
-        answer = fact_check(query=claim, token=token, api_key=api_key, api_type=api_type, llm_name=llm_name, llm_endpoint=endpoint, document_set=[FACT_CHECK], num_hits=10)
+        answer = fact_check(query=claim, token=token, api_key=DEFAULT_API_KEY, llm_name=DEFAULT_MODEL, llm_endpoint=DEFAULT_ENDPOINT, document_set=[FACT_CHECK], num_hits=10)
         if answer['error_msg']:
             error_msg = answer['error_msg']
             console_logger.error(f"{claim} {error_cnt} {error_msg}")

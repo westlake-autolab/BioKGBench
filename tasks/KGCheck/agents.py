@@ -1,15 +1,17 @@
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 import os
+import yaml
 
 from .prompts import kg_agent_prompt
 from .prompts import team_leader_prompt
 from .prompts import validation_agent_prompt
 
 
-load_dotenv()
+config = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "../../config/llm_config.yml")))
+# load_dotenv()
 
-llm = ChatOpenAI(model=os.getenv('MODEL', "Qwen1.5-70B-Chat"), temperature=0, api_key=os.getenv('API_KEY', "sk-key"), base_url=os.getenv('ENDPOINT', "http://10.0.1.194:7410/v1"))
+llm = ChatOpenAI(model=config['model'], temperature=0, api_key=config['api_key'], base_url=config['base_url'])
 
 kg_chain = (
     kg_agent_prompt
@@ -25,3 +27,7 @@ validation_chain = (
     validation_agent_prompt
     |llm
 )
+
+
+if __name__ == "__main__":
+    print(config)

@@ -2,8 +2,8 @@ from loguru import logger as logging
 import requests
 from time import sleep
 
-from ..constant_ import DOCUMENT_SET_NAME
-from ..constant_ import DEFAULT_MODEL_ENDPOINT
+from ..constant_ import FACT_CHECK
+from ..constant_ import DEFAULT_MODEL, DEFAULT_API_KEY, DEFAULT_ENDPOINT
 from ..constant_ import AUTH_URL, BASE_URL
 
 
@@ -44,7 +44,7 @@ def talk(token, data: list, llm_endpoint: str="http://10.0.1.194:7010") -> dict 
     return response.json()['model_name'], response.json()['answer']
 
 
-def fact_check(*, token, claim, api_key, llm_name, llm_endpoint=DEFAULT_MODEL_ENDPOINT, api_type:str="local", document_set: list=[DOCUMENT_SET_NAME], num_hits: int=50, source_type: list=['plain_text'], target_quotes: list[str]=None) -> dict | str:
+def fact_check(*, token, claim, api_key=DEFAULT_API_KEY, llm_name=DEFAULT_MODEL, llm_endpoint=DEFAULT_ENDPOINT, api_type:str="local", document_set: list=[FACT_CHECK], num_hits: int=50, source_type: list=['plain_text'], target_quotes: list[str]=None) -> dict | str:
     url = BASE_URL + "agent/fact-checking"
     data = {
         "query": claim,
@@ -75,7 +75,7 @@ def fact_check(*, token, claim, api_key, llm_name, llm_endpoint=DEFAULT_MODEL_EN
     return response.json()
 
 
-def search_doc(*, token, claim: str, document_set:list[str]=[DOCUMENT_SET_NAME], web_types: dict={}, source_type: list=[]):
+def search_doc(*, token, claim: str, document_set:list[str]=[FACT_CHECK], web_types: dict={}, source_type: list=[]):
     url = BASE_URL + "document-search"
     headers = {"Token": token}
     body = {

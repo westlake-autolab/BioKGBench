@@ -1,0 +1,13 @@
+module: tasks.KGQA.s.KGQA.client.agents.HTTPAgent
+parameters:
+  url: https://open.bigmodel.cn/api/paas/v4/chat/completions
+  headers:
+    Content-Type: application/json
+    Authorization: <% PUT-YOUR-GLM-KEY-HERE %>
+  body:
+    temperature: 0.1
+  prompter:
+    name: role_content_dict
+    args:
+      agent_role: assistant
+  return_format: "{response[choices][0][message][content]}"

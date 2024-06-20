@@ -1,13 +1,13 @@
 import asyncio
 from typing import Union, List, Dict, Any
-from src.typings import (
+from ..typings import (
     TaskOutput,
     AgentOutput,
     ChatHistoryItem,
     SampleIndex,
     TaskSampleExecutionResult
 )
-from src.utils import ColorMessage
+from ..utils import ColorMessage
 
 class SessionController:
     def __init__(self) -> None:

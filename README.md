@@ -12,27 +12,65 @@ Pursuing artificial intelligence for biomedical science, a.k.a. AI Scientist, dr
 However, to evaluate such systems, people either rely on direct Question-Answering~(QA) to the LLM itself, or in a biomedical experimental manner. How to precisely benchmark biomedical agents from an AI Scientist perspective remains largely unexplored. To this end, we draw inspiration from one most important abilities of scientists, understanding the literature, and introduce `BioKGBench`.   
 In contrast to traditional evaluation benchmark that only focuses on factual QA, where the LLMs are known to have hallucination issues, we first disentangle **Understanding Literature** into two atomic abilities, i) **Understanding** the unstructured text from research papers by performing scientific claim verification, and ii) Ability to interact with structured Knowledge-Graph Question-Answering~(KGQA) as a form of **Literature** grounding. We then formulate a novel agent task, dubbed KGCheck, using KGQA and domain-based Retrieval-Augmented Generation (RAG) to identify the factual errors of existing large-scale knowledge graph databases.   We collect over two thousand data for two atomic tasks and 225 high-quality annotated data for the agent task. Surprisingly, we discover that state-of-the-art agents, both daily scenarios and biomedical ones, have either failed or inferior performance on our benchmark. We then introduce a simple yet effective baseline, dubbed `BKGAgent`. On the widely used popular dataset, we discover over 90 factual errors which yield the effectiveness of our approach, yields substantial value for both the research community or practitioners in the biomedical domain.
 
+## Code Structure
+```
+Agent4S-BioKG
+|-- assets
+|   `-- img
+|-- config
+|   |-- kg_config.yml                               # config for build kg and connect to neo4g
+|   `-- llm_config.yml                              # config for llm
+|-- data
+|   |-- bioKG                                       # dataset for build kg
+|   |-- kgcheck                                     # dataset for KGCheck experiment
+|   |-- kgqa                                        # dataset for KGQA experiment
+|   `-- scv                                         # dataset for SCV experiment
+`-- tasks
+    |-- KGCheck                                     # KGCheck task
+    |-- KGQA                                        # KGQA task
+    |-- SCV                                         # SCV task
+    `-- utils
+        |-- agent_fucs                              # agent functions
+        |-- embedding                               # embedding model starter for scv task
+        |-- kg                                      # kg builder and kg connecotr
+        |-- constant_.py                            # constant variables
+        `-- threadpool_concurrency_.py              # threadpool concurrency method
+```
+
 ## Overview
+<details open>
+<summary>Dataset(Need to <a href="https://huggingface.co/datasets/AutoLab-Westlake/BioKGBench-Dataset">download</a> from huggingface)</summary>
+
+* **bioKG**: The knowledge graph used in the dataset.
+* **KGCheck**: Given a knowledge graph and a scientific claim, the agent needs to check whether the claim is supported by the knowledge graph. The agent can interact with the knowledge graph by asking questions and receiving answers.
+  * **Dev**: 20 samples
+  * **Test**: 205 samples
+  * **corpus**: 51 samples
+* **KGQA**: Given a knowledge graph and a question, the agent needs to answer the question based on the knowledge graph.
+  * **Dev**: 60 samples
+  * **Test**: 638 samples
+* **SCV**: Given a scientific claim and a research paper, the agent needs to check whether the claim is supported by the research paper.
+  * **Dev**: 120 samples
+  * **Test**: 1265 samples
+  * **corpus**: 5664 samples
+
+</details>
+
 <details open>
 <summary>Tasks</summary>
 
 * **KGCheck**: Given a knowledge graph and a scientific claim, the agent needs to check whether the claim is supported by the knowledge graph. The agent can interact with the knowledge graph by asking questions and receiving answers.
+
 * **KGQA**: Given a knowledge graph and a question, the agent needs to answer the question based on the knowledge graph.
 * **SCV**: Given a scientific claim and a research paper, the agent needs to check whether the claim is supported by the research paper.
 
 </details>
 
-<details open>
-<summary>Code Structure</summary>
-</details>
-
-<details open>
+<details close>
 <summary>Baseline</summary>
+# TODO
 </details>
 
-<details open>
-<summary>Dataset</summary>
-</details>
 
 ## News and Updates
 [2024-06-06] `BioKGBench` v0.1.0 is released.
@@ -49,21 +87,43 @@ pip install -r requirements.txt
 
 **Obtaining dataset**:
 The dataset can be found in the [release]. The dataset is divided into three parts: `KGCheck`, `KGQA`, and `SCV`, every part is split into `Dev` and `Test`.
+[[🤗 BioKGBench-Dataset](https://huggingface.co/datasets/AutoLab-Westlake/BioKGBench-Dataset)]
+```git
+git lfs install
+GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/datasets/AutoLab-Westlake/BioKGBench-Dataset ./data
+cd data
+git lfs pull
+```
+
+**Building Knowledge Graph**:
+```bash
+
+```
 
 **Running Baseline**:
+* Config  
+You need to modify the configuration file in the `config` folder, including `kg_config.yml`, and `llm_config.yml`.
 
 * `KGCheck`:
-```bash
-# TODO
-```
+  **--data_file**: the path of the dataset file.
+  ```bash
+  python -m tasks.KGCheck.team --data_file data/kgcheck/dev.json
+  ```
 * `KGQA`:
-```bash
-#TODO
-```
+  **update task config**: tasks/KGQA/configs/tasks/kg.yaml, change data path as your own path.  
+  **make agent config file**: tasks/KGQA/configs/agents/*.yaml, choose one of these agents or make your own agent.
+  **update llm config**: tasks/KGQA/configs/assignments/default.yaml, change agent if you make you won.
+  ```bash
+  python -m tasks.KGQA.start_task -a
+  ```
+  Open another terminal and run:
+  ```bash
+  python -m tasks.KGQA.assigner
+  ```
 * `SCV`:
-```bash
-#TODO
-```
+  ```bash
+  #TODO
+  ```
 
 ## Acknowledgement
 

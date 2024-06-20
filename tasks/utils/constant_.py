@@ -1,12 +1,14 @@
 import os
+import yaml
+
+config = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "../../config/llm_config.yml")))
 
 FACT_CHECK = "fact_check"
 
-USERNAME = "sqma"
-PASSWORD = "123456"
+DEFAULT_ENDPOINT = config['base_url']
+DEFAULT_MODEL = config['model']
+DEFAULT_API_KEY = config['api_key']
 
-DEFAULT_MODEL_ENDPOINT = "http://10.0.1.194:7010/v1"
-KG_BASE_URL = os.environ.get("KG_BASE") or "http://172.16.55.90:7625"
 AUTH_URL = os.environ.get("AUTH_BASE") or "http://10.0.1.197:9992"
 BASE_URL = os.environ.get("SERVER_BASE") or "http://172.17.0.1:3000/api/"
 

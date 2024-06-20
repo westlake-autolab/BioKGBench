@@ -1,10 +1,8 @@
 import json
-from src.kg.graphdb_connector import connector
-
-
-
+from .....utils.kg.graphdb_connector import connector
 
 from typing import List, Tuple, Dict, Optional, Union
+
 
 def get_relations_by_ids_agent(entity_ids: List[str]) -> Tuple[Dict[str, Dict[str, List[str]]], str]:
     """

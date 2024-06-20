@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse
 from pathlib import Path
 import yaml
 
-from src.typings import *
+from ..typings import *
 
 
 class TimeoutLock(asyncio.Lock):

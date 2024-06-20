@@ -1,7 +1,0 @@
-#Database configuration
-db_url: "172.16.55.90"
-#dbPort = 7688 #Production environment
-db_port: 7687 #Test environment
-# db_port: 7474
-db_user: "neo4j"
-db_password: "NeO4J"

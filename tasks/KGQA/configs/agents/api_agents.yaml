@@ -1,0 +1,89 @@
+gpt-4:
+    import: "./openai-chat.yaml"
+    parameters:
+        name: "gpt-4"
+        body:
+            model: "gpt-4"
+            max_tokens: 512
+
+gpt-3.5-turbo-0613:
+    import: "./openai-chat.yaml"
+    parameters:
+        name: "gpt-3.5-turbo-0613"
+        body:
+            model: "gpt-3.5-turbo-0613"
+            max_tokens: 1024
+
+text-davinci-003:
+    import: "./openai-text.yaml"
+    parameters:
+        name: "text-davinci-003"
+        body:
+            model: "text-davinci-003"
+            max_tokens: 1024
+
+text-davinci-002:
+    import: "./openai-text.yaml"
+    parameters:
+        name: "text-davinci-002"
+        body:
+            model: "text-davinci-002"
+            max_tokens: 1024
+
+claude-3-opus-20240229:
+    import: "./claude-chat.yaml"
+    parameters:
+        name: "claude-3-opus-20240229"
+        body:
+            model: "claude-3-opus-20240229"
+            max_tokens: 1024
+            
+glm-4:
+    import: "./glm-agent.yaml"
+    parameters:
+        name: "glm-4"
+        body:
+            model: "glm-4"
+            max_tokens: 1024
+
+local_model:
+    import: "./local_model.yaml"
+    parameters:
+        # name: "Baichuan-7B-Chat"
+        # name: "Baichuan2-7B-Chat"
+        # name: "Baichuan2-13B-Chat"
+        # name: "deepseek-moe-16b-chat"
+        # name: "deepseek-llm-67b-chat"
+        # name: "Meta-Llama-3-8B-Instruct"
+        # name: "Meta-Llama-3-70B-Instruct"
+        # name: "Mistral-7B-Instruct-v0.2"
+        # name: "Mixtral-8x7B-Instruct-v0.1"
+        # name: "Qwen1.5-1.8B-Chat"
+        # name: "Qwen1.5-MoE-A2.7B-Chat"
+        # name: "Qwen1.5-7B-Chat"
+        # name: "Qwen1.5-14B-Chat"
+        # name: "Qwen1.5-32B-Chat"
+        name: "Qwen1.5-72B-Chat"
+        # name: "Starling-LM-alpha-8x7B-MoE-GPTQ"
+        # url: http://172.16.55.82:7010/v1/chat/completions
+        # url: http://172.16.55.82:7011/v1/chat/completions
+        # url: http://172.16.55.223:7010/v1/chat/completions
+        url: http://10.0.1.194:7010/v1/chat/completions
+        body:
+            # model: "Baichuan-7B-Chat"
+            # model: "Baichuan2-7B-Chat"
+            # model: "Baichuan2-13B-Chat"
+            # model: "deepseek-moe-16b-chat"
+            # model: "deepseek-llm-67b-chat"
+            # model: "Meta-Llama-3-8B-Instruct"
+            # model: "Meta-Llama-3-70B-Instruct"
+            # model: "Mistral-7B-Instruct-v0.2"
+            # model: "Mixtral-8x7B-Instruct-v0.1"
+            # model: "Qwen1.5-1.8B-Chat"
+            # model: "Qwen1.5-MoE-A2.7B-Chat"
+            # model: "Qwen1.5-7B-Chat"
+            # model: "Qwen1.5-14B-Chat"
+            # model: "Qwen1.5-32B-Chat"
+            model: "Qwen1.5-72B-Chat"
+            # model: "Starling-LM-alpha-8x7B-MoE-GPTQ"
+            max_tokens: 1024

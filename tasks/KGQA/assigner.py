@@ -14,7 +14,7 @@ from typing import Dict, List, Tuple, Iterator, Union, Callable
 from .typings import AssignmentConfig, SampleIndex, TaskOutput, TaskClientOutput
 from .utils import ColorMessage, Graph, MaxFlow
 from .client import AgentClient, TaskClient
-from src.client.task import TaskError
+from .client.task import TaskError
 from .configs import ConfigLoader
 
 
@@ -396,7 +396,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--config", "-c", type=str, default="configs/assignments/default.yaml"
+        "--config", "-c", type=str, default=os.path.join(os.path.dirname(__file__), "configs/assignments/default.yaml")
     )
     parser.add_argument(
         "--auto-retry", "-r", action="store_true", dest="retry"

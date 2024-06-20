@@ -1,0 +1,5 @@
+definition:
+  import: tasks/kg.yaml
+
+start:
+  kg-std: 10

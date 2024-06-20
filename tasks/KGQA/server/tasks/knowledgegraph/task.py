@@ -1,13 +1,14 @@
+import ast
 import sys
 import re
 import json
 from typing import List, Tuple, Dict, Any
 
-from src.server.task import Task, Session
-from src.typings import TaskSampleExecutionResult, TaskOutput, SampleIndex, AgentOutputStatus, SampleStatus
 from .api import *
-from src.utils import ColorMessage
-import ast
+from ...task import Task, Session
+from ....typings import TaskSampleExecutionResult, TaskOutput, SampleIndex, AgentOutputStatus, SampleStatus
+from ....utils import ColorMessage
+
 
 def extract_params(data, function_name):
     pattern = re.compile(r'\b' + re.escape(function_name) + r'\((.*?)\)', re.DOTALL)

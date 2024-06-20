@@ -1,8 +1,8 @@
 from enum import Enum
 import requests
 from typing import List
-from src.typings import *
-from src.utils import ColorMessage
+from ..typings import *
+from ..utils import ColorMessage
 from .agent import AgentClient
 
 
