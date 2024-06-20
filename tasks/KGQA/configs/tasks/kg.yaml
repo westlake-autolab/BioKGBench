@@ -4,9 +4,13 @@ default:
     round: 15
     # sparql_url: "http://164.107.116.56:3093/sparql"  # TODO: change here...
 
+kg-dev:
+  parameters:
+    name: "KnowledgeGraph-dev"
+    data_file: "data/kgqa/dev.json"
+
 kg-std:
   parameters:
     name: "KnowledgeGraph-std"
-    data_file: "data/kgqa/dev.json"
-    # data_file: "data/kgqa/test.json"
+    data_file: "data/kgqa/test.json"
   
