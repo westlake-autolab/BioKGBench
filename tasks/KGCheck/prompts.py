@@ -44,6 +44,26 @@ _validation_agent_prompt_template = ChatPromptTemplate.from_messages(
                          "Then you will get the result: id: P22303-2, accession: ACES_HUMAN, name: ACHE.\n"
                          "So the 'name' attribute information of protein 'P22303-2' is exactly ACHE. Return the result to team_leader and finish your task.",
                   example=True),
+     HumanMessage(content="If you are asked to verify if there is exactly no association between the node of type 'Protein' with id 'Q96QP1' and the node of type 'Tissue' with id 'BTO:0000007'."
+                  "First you should get the relation of the two node by using pub_rag with the args: there is no association between the node of type 'Protein' with id 'Q96QP1' and the node of type 'Tissue' with id 'BTO:0000007'."
+                  "Then you will get some relaed documents with their ids, read these documents and decide whether these related support the claim you pass to the tool."
+                  "If the answer is not support reply 'refute' to team_leader. If the answer is support, reply 'support' and evidence which is comprised of ducoment ids to team_leader.",
+                  example=True),
+    HumanMessage(content="If you are asked to verify the existence of protein 'P22303-2', you should use get_uniprot_protein_info tool and pass args = {'protein_id': 'P22303-2'}.\n"
+                         "If the information of the protein is returned, it means it still exists in UniProt so you should tell the leader this fact."
+                         "Otherwise, if the return message indicates the protein is removed, send this removal fact to team_leader.",
+                         example=True),
+    HumanMessage(content="If you are asked to verify if there is exactly CURATED_INTERACTS_WITH relationship between the node of type 'Protein' with id 'Q96QP1' and the node of type 'Protein' with id 'Q08379'.\n"
+                         "Call the 'pub_rag' tool and pass the claim to it, you will get no more than 10 documents related to the claim.\n"
+                         "Read the documents and give your feedback on whether you support the claim based on the related documents.\n"
+                         "If you are asked to verify a certain relationship, consider the get_uniprot_protein_info and check_interaction_string tool.\n"
+                         "You should send your answer to 'team_leader' which should include a 'support' or 'refute' attitude and your evidence comprised of ducument id or web database information.\n"
+                         "Directly jump into your work when task is given to you and do not waste time replying just courtesies or your plans to the team_leader.",
+                  example=True),
+    HumanMessage(content="If you are asked to verify if there is exactly no relationship between the node of type 'Protein' with id 'Q96QP1' and the node of type 'Protein' with id 'Q08379'."
+                  "First you should get the relation of the two node by using check_interaction_string with the args: protein1='Q96QP1', protein2='Q08379'."
+                  "Then you will get the result from STRING database, so you know the answer to the question, you should send the message to team_leader.",
+                  example=True),
     MessagesPlaceholder("input")
   ]
 )
@@ -92,13 +112,7 @@ _kg_agent_prompt_ = ChatPromptTemplate.from_messages(
         "call_tool: the worker to use the tool you asked and will return the result to you."
      "You can call the following tools in call_tool to help you:"
      "{tool_usage}"
-    #  "Use the following format:"
-    #  "kg_agent_Echo: reply to your leader. You should call its name before you talk."
-    #  "Thought: you should always think about what to do"
-    #  "Action: the action to take, should be one of [{tool_names}] or return the result to team_leader"
-    #  "... (this kg_agent_Echo/Thought/Action can repeat N times)"
      "ATTENTION! You can call tools in this way: 'call_tool, tool = tool_name, args = ...', where args should be in the format of dict."
-    #  "then send the message to call_tool, which means you should start your messages by 'call_tool, '."
      "Directly jump into your work when task is given to you and do not waste time replying just courtesies."
      "Do not try to ask team_leader to your task!"),
     HumanMessage(content="given that you have got a task: kg_agent, query the 'name' attribute of 'Protein' type with the 'id' as 'B2RBV5' in the KG."
@@ -107,6 +121,24 @@ _kg_agent_prompt_ = ChatPromptTemplate.from_messages(
                          "So you know the answer to the question, you should send the message to team_leader."
                          "It should be noted that team_leader is not a tool, so you don't need to make a tool call to send message to it.",
                   example=True),
+    HumanMessage(content="given that you have got a task: kg_agent, query the relationship between the node of type 'Protein' with id 'Q96QP1' and the node of type 'Tissue' with id 'BTO:0000007'."
+                        "First you should call query_relation_between_nodes with arguments type1='Protein', id1='Q96QP1', type2='Tissue', id2='BTO:0000007'."
+                        "Then you will get the result from tools."
+                        "So you know the answer to the question, you should send the message to team_leader."
+                        "It should be noted that team_leader is not a tool, so you don't need to make a tool call to send message to it.",
+                example=True),
+    HumanMessage(content="given that you have got a task: kg_agent, query the existence of the node with the type 'Protein' and the id 'A8MVS1' in KG."
+                        "First you should call query_node_existence with arguments type='Protein', id='A8MVS1'."
+                        "Then you will get the result from tools."
+                        "So you know the answer to the question, you should send the message to team_leader."
+                        "It should be noted that team_leader is not a tool, so you don't need to make a tool call to send message to it.",
+                example=True),
+    HumanMessage(content="given that you have got a task: kg_agent, query the relationship between the node of type 'Protein' with id 'Q96QP1' and the node of type 'Protein' with id 'Q08379'."
+                        "First you should call query_relation_between_nodes with arguments type1='Protein', id1='Q96QP1', type2='Protein', id2='Q08379'."
+                        "Then you will get the result from tools."
+                        "So you know the answer to the question, you should send the message to team_leader."
+                        "It should be noted that team_leader is not a tool, so you don't need to make a tool call to send message to it.",
+                example=True),
     MessagesPlaceholder("input")
   ]
 )
@@ -127,11 +159,25 @@ _team_leader_prompt_ = ChatPromptTemplate.from_messages(
      " Assign subtask to just ONE suitable agent next time you are invited to speak. "
      " If kg_agent or validation_agent tries to assign task to you, you should warn them to focus on their task."
      " When finished, respond with your answer and send it to 'FINISH'."),
+     HumanMessage(content="if a task is given to you: check the relationship in the knowledge graph from the node of type 'Protein' with id 'Q96QP1' to the node of type 'Protein' with id 'Q08379'. If a relationship exists, verify its existence. Please note that if the relationship between two nodes contains terms like 'CURATED' in knowledge graph, you need to find literature evidence to make a judgment. If no relationship exists, confirm that it indeed does not exist. If the relationship between these two nodes in the knowledge graph is correct, please respond with 'support'; otherwise, respond with 'refute'."
+                  "first, you should make a plan: first let kg_agent query the relationship between the node of type 'Protein' with id 'Q96QP1' and the node of type 'Protein' with id 'Q08379',"
+                  "let validation_agent check the feedback returned by kg_agent, finally I will compare the feedbacks returned by both of them and make my dicision.\n"
+                  "After that you execute your plan: assign task to kg_agent: kg_agent, query the relationship between the node of type 'Protein' with id 'Q96QP1' and the node of type 'Protein' with id 'Q08379'. Wait and you will the feedback from it."
+                  "assign task to validation_agent: validation_agent, verify the feedback from kg_agent. Noted that you should tell the validation_agent what the feedback from kg_agent before you ask it to verify.",
+                  example=True),
+     HumanMessage(content="if you are asked to check the relationship between two nodes in the knowledge graph.\n"
+                          "first, you should make a solution plan, for example, first, kg_agent should ..., then valiation_agent should ..., finally, I should ....\n"
+                          "Then assign task to kg_agent, wait for its feedback. After that, assign DETAILED task to validation_agent based on the demand of the user and feedback of kg_agent. It should be noted that validation_agent cannot have access to the feedback of kg_agent, so you should tell it instead.\n"
+                          "compare the information provided by kg_agent and its verification reslut by validation_agent, then give your final answer to user's question and FINISH the task.",
+                 example=True),
      HumanMessage(content="if a task is given to you: Please check if the 'name' attribute of the node with type Protein and id Q4G0T1 in the knowledge graph is correct. If it's correct, please respond with 'support'; if not, respond with 'refute'.\n"
                           "First, you should make a plan: first let kg_agent query the 'name' attribute of the node with type Protein and id Q4G0T1 in KG, then let validation_agent check the feedback returned by kg_agent, finally I will compare the feedbacks returned by both of them and make my dicision."
                           "After that assign task to kg_agent: kg_agent, query the 'name' attribute of the node with type Protein and id Q4G0T1 in KG. Wait and you will the feedback from it."
                           "Then assign task to validation_agent: validation_agent, verify the feedback from kg_agent. Noted that you should tell the validation_agent what the feedback from kg_agent before you ask it to verify.",
                   example=True),
+     HumanMessage(content="If you are asked to check whether some node still exists in KG, first ask kg_agent to query the node information in KG for you, then ask validation_agent to verify the existence of the node.\n"
+                "compare the feedbacks returned by both of them and finally you will reach the conclusion. Send your conclusion to user and finish the task.",
+                example=True),
     MessagesPlaceholder("input")]
 )
 
