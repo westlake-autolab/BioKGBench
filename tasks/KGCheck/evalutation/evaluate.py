@@ -1,98 +1,118 @@
 import json
 import re
+import argparse
 
-his_path=''
-golden_ans_path=''
-res_path=''
+def get_tool(task_type, relationship=None):
+    match task_type:
+        case 'node attribute':
+            kg_tool = 'query_node_attribute'
+            val_tool = 'get_uniprot_protein_info'
+        case 'existence':
+            kg_tool = 'query_node_existence'
+            val_tool = 'get_uniprot_protein_info'
+        case 'one-hop':
+            kg_tool = 'query_relation_between_nodes'
+            if relationship == 'CURATED_INTERACTS_WITH':
+                val_tool = 'pub_rag'
+            else:
+                val_tool = 'check_interaction_string'
+        case 'existing one-hop':
+            kg_tool = 'query_relation_between_nodes'
+            val_tool = 'pub_rag'
+    return kg_tool, val_tool
+    
 
-def final_grader(his_path, golden_ans_path, res_path):
-    right_ans = 0
-    ans = []
-    token_induced = 0
-    with open(his_path, 'r', encoding='utf-8') as file:
-        units = file.read().strip().split('\n\n')
-    for unit in units:
-        lines = unit.strip().split('\n')
-        first_line = lines[0]
-        last_line = lines[-1]
-        ans.append({'task': first_line, 'ans': last_line})
-    print(len(ans))
+def evaluator(his_path, golden_ans_path):
     with open(golden_ans_path, 'r', encoding='utf-8') as f:
         golden_ans = json.load(f)
-    if len(golden_ans) == len(ans):
-        succ_exe = len(ans)
-        for i in range(0, len(golden_ans)):
-            if golden_ans[i]['label'] in ans[i]['ans']:
-                right_ans += 1
-            elif not "'team_leader'" in ans[i]['ans']:
-                succ_exe -= 1
-                if "Bad Request" in ans[i]['ans']:
-                    token_induced += 1
-    else:
-        temp = 0
-        miss = []
-        for i in ans:
-            if i['task'] == golden_ans[temp]['instruction']:
-                temp+=1
-            else:
-                miss.append(temp)
-                temp+=1
-        print("something wrong.") 
-        print(temp)
-        print(miss)
-        return
-    em = right_ans/len(ans)
-    exe = succ_exe/len(ans)
-    tk = token_induced/len(ans)
-    with open(res_path, 'w') as ff:
-        ff.write(f"EM = {em}, executability = {exe}, token_induced_err = {tk}")
-        
-def process_kg(his_path, task_tool, res_path):
+    with open(his_path, 'r', encoding='utf-8') as file:
+        units = file.read().strip().split('\n\n')
+    
+    # initialize counters
+    succ_exe = len(units)
+    right_ans = 0
     right_kg_tool = 0
     sleep_kg = 0
-    with open(his_path, 'r', encoding='utf-8') as file:
-        units = file.read().strip().split('\n\n')
-    for unit in units:
-        lines = unit.strip().split('\n')
-        kg_flag = 1
-        for line in lines:
-            if "INFO:root:{'kg_agent'" in line:
-                kg_flag = 1
-                if re.search(task_tool, line):
-                    right_kg_tool += 1
-                    break
-            else:
-                kg_flag = 0
-        if not kg_flag: sleep_kg += 1
-    right_tool_rate = right_kg_tool/len(units)
-    sleep_kg_rate = sleep_kg/len(units)
-    with open(res_path, 'w') as f:
-        f.write(f"right_tool_rate = {right_tool_rate}, sleep_kg_rate = {sleep_kg_rate}")
-    
-def procee_val(his_path, task_tool, res_path):
     right_val_tool = 0
     sleep_val = 0
-    with open(his_path, 'r', encoding='utf-8') as file:
-        units = file.read().strip().split('\n\n')
-    for unit in units:
-        lines = unit.strip().split('\n')
-        val_flag = 1
-        for line in lines:
-            if "INFO:root:{'validation_agent'" in line:
-                val_flag = 1
-                if re.search(task_tool, line):
-                    right_val_tool += 1
-                    break
-            else:
-                val_flag = 0
-        if not val_flag: sleep_val += 1
-    right_tool_rate = right_val_tool/len(units)
-    sleep_val_rate = sleep_val/len(units)
-    with open(res_path, 'w') as f:
-        f.write(f"right_tool_rate = {right_tool_rate}, sleep_val_rate = {sleep_val_rate}")
     
+    for unit, gd_unit in zip(units, golden_ans):
+        lines = unit.strip().split('\n')
+        task_line = lines[0]
+        ins = gd_unit['instruction']
+        if ins == task_line:
+            # for final result
+            res_line = lines[-1]
+            label = gd_unit['label']
+            if not "'team_leader'" in res_line:
+                succ_exe -= 1
+            elif label in res_line:
+                right_ans += 1
+            
+            # tool check preparation
+            task_type = gd_unit['check_type']
+            if task_type == 'one-hop':
+                relationship = gd_unit['graph']['relationship']
+            else:
+                relationship = None
+            kg_tool, val_tool = get_tool(task_type, relationship)
+            
+            # for process evaluation
+            kgtool_flag = 0
+            valtool_flag = 0
+            for line in lines:
+                
+                if not kgtool_flag:
+                    if "INFO:root:{'kg_agent'" in line: # check if kg agent is invoked
+                        kg_flag = 1
+                        if re.search(kg_tool, line):
+                            right_kg_tool += 1 # check if right kg tool is called
+                            kgtool_flag = 1
+                    else:
+                        kg_flag = 0
+                
+                if not valtool_flag:
+                    if "INFO:root:{'validation_agent'" in line: # check if validation agent is invoked
+                        val_flag = 1
+                        if re.search(val_tool, line):
+                            right_val_tool += 1 # check if right val tool is called
+                            valtool_flag = 1
+                    else:
+                        val_flag = 0
+                    
+                if kgtool_flag and valtool_flag:
+                    break
+
+            if not kg_flag: sleep_kg += 1
+            if not val_flag: sleep_val += 1
+
+        else:
+            print(f"record missing. instruction: {ins}")
+            continue
+    
+    # calculate metrics
+    em = right_ans/len(units)
+    exe = succ_exe/len(units)
+    right_kg_tool_rate = right_kg_tool/len(units)
+    invoked_kg_rate = (len(units) - sleep_kg)/len(units)
+    right_val_tool_rate = right_val_tool/len(units)
+    invoked_val_rate = (len(units) - sleep_val)/len(units)
+    
+    # print result
+    print(f'''final result:\n 
+                exact match = {em}, executability = {exe}\n
+kg agent performance:\n
+                right tool rate = {right_kg_tool_rate}, agent executability = {invoked_kg_rate}\n
+validation agent performance:\n
+                right tool rate = {right_val_tool_rate}, agent executability = {invoked_val_rate}''')
+
         
 if __name__ == '__main__':
-    final_grader(his_path, golden_ans_path, res_path)
-    # process_kg(his_path, 'query_node_attribute', res_path)
-    # procee_val(his_path, 'get_uniprot_protein_info', res_path)
+    
+    parser = argparse.ArgumentParser(description='Task KGCheck - evaluation')
+    parser.add_argument('--history_file', '-his', type=str, help='The path to the history file')
+    parser.add_argument('--golden_answer_file', '-g', type=str, help='The path to the log file')
+
+    args = parser.parse_args()
+
+    evaluator(args.history_file, args.golden_answer_file)
