@@ -2,11 +2,11 @@ langchain==0.1.17
 langchain-core==0.1.52
 langchain-community==0.0.38
 langchain_openai==0.1.3
+langchain-chroma==0.1.1
 langgraph==0.0.50
 neo4j==5.20.0
 jsonlines
 loguru
-numpy
 pandas
 transformers
 fastapi

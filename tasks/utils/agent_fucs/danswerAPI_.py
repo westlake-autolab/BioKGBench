@@ -158,14 +158,14 @@ class IndexStatus:
 
 
 if __name__ == "__main__":
-    TOKEN = getToken('sqma', '123456')
+    # TOKEN = getToken('sqma', '123456')
     # # file_path = Path('data/split').glob("*.json")
     # # document_name = 'pride'
     # file_path = ["data/papers/pmic.201700001.pdf", "data/papers/msb.20188793.pdf"]
     # document_name = None
     # # print(file_path)
 
-    instance = IndexStatus(TOKEN)
+    instance = IndexStatus("TOKEN")
     # status = instance.list_index_status()
     # document_sets = [dc['name'] for dc in instance.list_document_set()]
     # print(document_sets)

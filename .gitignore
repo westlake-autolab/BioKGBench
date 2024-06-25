@@ -164,3 +164,4 @@ cython_debug/
 
 /data
 /results
+tasks/SCV/scv_through_server.py

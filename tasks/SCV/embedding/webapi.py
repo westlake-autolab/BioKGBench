@@ -1,14 +1,12 @@
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 from transformers import AutoTokenizer, AutoModel
 import uvicorn
 import torch
 import torch.nn.functional as F
 import argparse
 
-from api_models import EmbeddingRequest
-from api_models import EmbeddingResponse
-import os
+from .model import EmbeddingRequest
+from .model import EmbeddingResponse
 
 app = FastAPI()
 
@@ -29,7 +27,7 @@ def mean_pooling(model_output, attention_mask):
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
 
-@app.post("/embedding")
+@app.post("/embeddings")
 async def get_embedding(request: EmbeddingRequest):
     global model, tokenizer
     prompt = request.texts
@@ -54,8 +52,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     DEVICE_ID = args.device
 
-    DEVICE = "cuda"
-    CUDA_DEVICE = f"{DEVICE}:{DEVICE_ID}"
+    CUDA_DEVICE = f"cuda:{DEVICE_ID}"
 
     tokenizer = AutoTokenizer.from_pretrained('jinaai/jina-embeddings-v2-base-zh', trust_remote_code=True)
     model = AutoModel.from_pretrained('jinaai/jina-embeddings-v2-base-zh', trust_remote_code=True) # trust_remote_code is needed to use the encode method

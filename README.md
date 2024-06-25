@@ -68,7 +68,6 @@ Agent4S-BioKG
 
 <details close>
 <summary>Baseline</summary>
-# TODO
 </details>
 
 
@@ -95,24 +94,35 @@ cd data
 git lfs pull
 ```
 
-**Building Knowledge Graph**:
+**Building Knowledge Graph**:  
 ```bash
-
+# TODO
 ```
 
 **Running Baseline**:
 * Config  
 You need to modify the configuration file in the `config` folder, including `kg_config.yml`, and `llm_config.yml`.
 
-* `KGCheck`:
+* `KGCheck`:  
+  run experiment  
   **--data_file**: the path of the dataset file.
   ```bash
   python -m tasks.KGCheck.team --data_file data/kgcheck/dev.json
   ```
-* `KGQA`:
-  **update task config**: tasks/KGQA/configs/tasks/kg.yaml, change data path as your own path.  
-  **make agent config file**: tasks/KGQA/configs/agents/*.yaml, choose one of these agents or make your own agent.
-  **update llm config**: tasks/KGQA/configs/assignments/default.yaml, change agent if you make you won.
+  evaluate  
+  **--history_file**: the path of the log file.  
+  **--golden_answer_file**: the path of the golden answer file.
+  ```bash
+  python -m tasks.KGCheck.evalutation.evaluate --history_file results/kgcheck/log_1718880808.620556.txt --golden_answer_file data/kgcheck/dev.json
+  ```
+* `KGQA`:   
+  change config  
+  ```
+  update task config: tasks/KGQA/configs/tasks/kg.yaml, change data path as your own path.  
+  make agent config file: tasks/KGQA/configs/agents/*.yaml, choose one of these agents or make your own agent.
+  update llm config: tasks/KGQA/configs/assignments/default.yaml, change agent if you make you won.
+  ``` 
+  start contoller and worker  
   ```bash
   python -m tasks.KGQA.start_task -a
   ```
@@ -120,9 +130,18 @@ You need to modify the configuration file in the `config` folder, including `kg_
   ```bash
   python -m tasks.KGQA.assigner
   ```
-* `SCV`:
+* `SCV`:  
+  start embedding api server:
   ```bash
-  #TODO
+  python -m tasks.SCV.embedding.webapi
+  ```
+  start SCV task:
+  ```bash
+  python -m tasks.SCV.scv_lc -d data/scv/dev.jsonl
+  ```
+  analysis:  
+  ```bash
+  python -m tasks.SCV.analysis -r results/svc/dev_1718903779.497523_answer_Qwen1.5-72B-Chat.jsonl
   ```
 
 ## Acknowledgement
@@ -130,6 +149,7 @@ You need to modify the configuration file in the `config` folder, including `kg_
 `BioKGBench` is an open-source project for Agent evaluation created by researchers in **Westlake Auto Lab** and **CAIRI Lab**. We encourage researchers interested in LLM Agent and other related fields to contribute to this project!
 
 ## Citation
+  **# TODO**
 
 ## Contact
 For adding new features, looking for helps, or reporting bugs associated with `BioKGBench`, please open a [GitHub issue](https://github.com/A4Bio/ProteinInvBench/issues) and [pull request](https://github.com/A4Bio/ProteinInvBench/pulls) with the tag `new features`, `help wanted`, or `enhancement`. Feel free to contact us through email if you have any questions.
