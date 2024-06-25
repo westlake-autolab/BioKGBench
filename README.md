@@ -66,8 +66,15 @@ Agent4S-BioKG
 
 </details>
 
-<details close>
-<summary>Baseline</summary>
+<details open>
+<summary>Evaluation</summary>
+
+* **Atomic Abilities (KGQA & SCV)**
+![atomic evaluation](/assets/img/atomic_evaluation.png "atomic evaluation")
+
+* **KGCheck - BKGAgent**
+![kgcheck evaluation](/assets/img/kgcheck_evaluation.png "kgcheck evaluation")
+
 </details>
 
 
