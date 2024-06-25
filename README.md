@@ -8,9 +8,9 @@ A Knowledge Graph Checking Benchmark of AI Agent for Biomedical Science.
 </p>
 
 ## Introduction
-Pursuing artificial intelligence for biomedical science, a.k.a. AI Scientist, draws increasing attention, where one common approach is to build a copilot agent driven by Large Language Models~(LLMs).   
-However, to evaluate such systems, people either rely on direct Question-Answering~(QA) to the LLM itself, or in a biomedical experimental manner. How to precisely benchmark biomedical agents from an AI Scientist perspective remains largely unexplored. To this end, we draw inspiration from one most important abilities of scientists, understanding the literature, and introduce `BioKGBench`.   
-In contrast to traditional evaluation benchmark that only focuses on factual QA, where the LLMs are known to have hallucination issues, we first disentangle **Understanding Literature** into two atomic abilities, i) **Understanding** the unstructured text from research papers by performing scientific claim verification, and ii) Ability to interact with structured Knowledge-Graph Question-Answering~(KGQA) as a form of **Literature** grounding. We then formulate a novel agent task, dubbed KGCheck, using KGQA and domain-based Retrieval-Augmented Generation (RAG) to identify the factual errors of existing large-scale knowledge graph databases.   We collect over two thousand data for two atomic tasks and 225 high-quality annotated data for the agent task. Surprisingly, we discover that state-of-the-art agents, both daily scenarios and biomedical ones, have either failed or inferior performance on our benchmark. We then introduce a simple yet effective baseline, dubbed `BKGAgent`. On the widely used popular dataset, we discover over 90 factual errors which yield the effectiveness of our approach, yields substantial value for both the research community or practitioners in the biomedical domain.
+Pursuing artificial intelligence for biomedical science, a.k.a. AI Scientist, draws increasing attention, where one common approach is to build a copilot agent driven by Large Language Models (LLMs).   
+However, to evaluate such systems, people either rely on direct Question-Answering (QA) to the LLM itself, or in a biomedical experimental manner. How to precisely benchmark biomedical agents from an AI Scientist perspective remains largely unexplored. To this end, we draw inspiration from one most important abilities of scientists, understanding the literature, and introduce `BioKGBench`.   
+In contrast to traditional evaluation benchmark that only focuses on factual QA, where the LLMs are known to have hallucination issues, we first disentangle **Understanding Literature** into two atomic abilities, i) **Understanding** the unstructured text from research papers by performing scientific claim verification, and ii) Ability to interact with structured Knowledge-Graph Question-Answering (KGQA) as a form of **Literature** grounding. We then formulate a novel agent task, dubbed KGCheck, using KGQA and domain-based Retrieval-Augmented Generation (RAG) to identify the factual errors of existing large-scale knowledge graph databases.   We collect over two thousand data for two atomic tasks and 225 high-quality annotated data for the agent task. Surprisingly, we discover that state-of-the-art agents, both daily scenarios and biomedical ones, have either failed or inferior performance on our benchmark. We then introduce a simple yet effective baseline, dubbed `BKGAgent`. On the widely used popular dataset, we discover over 90 factual errors which yield the effectiveness of our approach, yields substantial value for both the research community or practitioners in the biomedical domain.
 
 ## Code Structure
 ```
@@ -18,7 +18,7 @@ Agent4S-BioKG
 |-- assets
 |   `-- img
 |-- config
-|   |-- kg_config.yml                               # config for build kg and connect to neo4g
+|   |-- kg_config.yml                               # config for build kg and connect to neo4j
 |   `-- llm_config.yml                              # config for llm
 |-- data
 |   |-- bioKG                                       # dataset for build kg
@@ -75,12 +75,54 @@ Agent4S-BioKG
 [2024-06-06] `BioKGBench` v0.1.0 is released.
 
 ## Installation
-This project has provided an environment setting file of conda, users can easily reproduce the environment by the following commands:
-```bash
-conda create -n agent4s-biokg python=3.10
-conda activate agent4s-biokg
-pip install -r requirements.txt
-```
+* This project has provided an environment setting file of conda, users can easily reproduce the environment by the following commands:
+  ```bash
+  conda create -n agent4s-biokg python=3.10
+  conda activate agent4s-biokg
+  pip install -r requirements.txt
+  ```
+* Important Note about KG
+  * Building this knowledge graph (KG) locally requires at least 26GB of disk space.
+  * We provide the TSV files for constructing the KG in the `data/bioKG` directory. These files are parsed from the following databases. The databases have their own licenses, and the use of the KG and data files still requires compliance with these data use restrictions. Please, visit the data sources directly for more information:
+  | Source type             | Source                              | URL                                               | Reference                               |
+  |-------------------------|-------------------------------------|---------------------------------------------------|------------------------------------------|
+  | Database                | UniProt                             | [https://www.uniprot.org/](https://www.uniprot.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/29425356) |
+  | Database                | TISSUES                             | [https://tissues.jensenlab.org/](https://tissues.jensenlab.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/29617745) |
+  | Database                | STRING                              | [https://string-db.org/](https://string-db.org/)   | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30476243) |
+  | Database                | STITCH                              | [http://stitch.embl.de/](http://stitch.embl.de/)   | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/26590256) |
+  | Database                | SMPDB                               | [https://smpdb.ca/](https://smpdb.ca/)             | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/24203708) |
+  | Database                | SIGNOR                              | [https://signor.uniroma2.it/](https://signor.uniroma2.it/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/31665520) |
+  | Database                | SIDER                               | [http://sideeffects.embl.de/](http://sideeffects.embl.de/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/26481350) |
+  | Database                | RefSeq                              | [https://www.ncbi.nlm.nih.gov/refseq/](https://www.ncbi.nlm.nih.gov/refseq/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/26553804) |
+  | Database                | Reactome                            | [https://reactome.org/](https://reactome.org/)     | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/31691815) |
+  | Database                | PhosphoSitePlus                     | [https://www.phosphosite.org/](https://www.phosphosite.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/25514926) |
+  | Database                | Pfam                                | [https://pfam.xfam.org/](https://pfam.xfam.org/)   | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30357350) |
+  | Database                | OncoKB                              | [https://www.oncokb.org/](https://www.oncokb.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/28890946) |
+  | Database                | MutationDs                          | [https://www.ebi.ac.uk/intact/resources/datasets#mutationDs](https://www.ebi.ac.uk/intact/resources/datasets#mutationDs) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30602777) |
+  | Database                | Intact                              | [https://www.ebi.ac.uk/intact/](https://www.ebi.ac.uk/intact/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/24234451) |
+  | Database                | HPA                                 | [https://www.proteinatlas.org/](https://www.proteinatlas.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/21572409) |
+  | Database                | HMDB                                | [https://hmdb.ca/](https://hmdb.ca/)               | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/29140435) |
+  | Database                | HGNC                                | [https://www.genenames.org/](https://www.genenames.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30304474) |
+  | Database                | GwasCatalog                         | [https://www.ebi.ac.uk/gwas/](https://www.ebi.ac.uk/gwas/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30445434) |
+  | Database                | FooDB                               | [https://foodb.ca/](https://foodb.ca/)             |                                          |
+  | Database                | DrugBank                            | [https://www.drugbank.ca/](https://www.drugbank.ca/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/29126136) |
+  | Database                | DisGeNET                            | [https://www.disgenet.org/](https://www.disgenet.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/25877637) |
+  | Database                | DISEASES                            | [https://diseases.jensenlab.org/](https://diseases.jensenlab.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/25484339) |
+  | Database                | DGIdb                               | [http://www.dgidb.org/](http://www.dgidb.org/)     | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/29156001) |
+  | Database                | CORUM                               | [https://mips.helmholtz-muenchen.de/corum/](https://mips.helmholtz-muenchen.de/corum/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30357367) |
+  | Database                | Cancer Genome Interpreter          | [https://www.cancergenomeinterpreter.org/](https://www.cancergenomeinterpreter.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/29592813) |
+  | Ontology                | Disease Ontology                    | [https://disease-ontology.org/](https://disease-ontology.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30407550) |
+  | Ontology                | Brenda Tissue Ontology              | [https://www.brenda-enzymes.org/ontology.php?ontology_id=3](https://www.brenda-enzymes.org/ontology.php?ontology_id=3) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/25378310) |
+  | Ontology                | Experimental Factor Ontology        | [https://www.ebi.ac.uk/efo/](https://www.ebi.ac.uk/efo/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/20200009) |
+  | Ontology                | Gene Ontology                       | [http://geneontology.org/](http://geneontology.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/27899567) |
+  | Ontology                | Human Phenotype Ontology            | [https://hpo.jax.org/](https://hpo.jax.org/)       | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/27899602) |
+  | Ontology                | SNOMED-CT                           | [http://www.snomed.org/](http://www.snomed.org/)   | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/27332304) |
+  | Ontology                | Protein Modification Ontology       | [https://www.ebi.ac.uk/ols/ontologies/mod](https://www.ebi.ac.uk/ols/ontologies/mod) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/23482073) |
+  | Ontology                | Molecular Interactions Ontology     | [https://www.ebi.ac.uk/ols/ontologies/mi](https://www.ebi.ac.uk/ols/ontologies/mi) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/23482073) |
+  | Ontology                | Mass Spectrometry Ontology          | [https://www.ebi.ac.uk/ols/ontologies/ms](https://www.ebi.ac.uk/ols/ontologies/ms) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/23482073) |
+  | Ontology                | Units Ontology                      | [https://bioportal.bioontology.org/ontologies/UO](https://bioportal.bioontology.org/ontologies/UO) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/23060432) |
+
+
 
 ## Getting Started
 
@@ -94,14 +136,16 @@ cd data
 git lfs pull
 ```
 
-**Building Knowledge Graph**:  
-```bash
-# TODO
-```
+**Building Knowledge Graph**: 
+* Config  
+You need to modify the configuration file `kg_config.yml` in the `config` folder. 
+  ```bash
+  python -m tasks.utils.kg.graphdb_builder.builder
+  ```
 
 **Running Baseline**:
 * Config  
-You need to modify the configuration file in the `config` folder, including `kg_config.yml`, and `llm_config.yml`.
+You need to modify the configuration file `llm_config.yml` in the `config` folder.
 
 * `KGCheck`:  
   run experiment  
@@ -146,7 +190,7 @@ You need to modify the configuration file in the `config` folder, including `kg_
 
 ## Acknowledgement
 
-`BioKGBench` is an open-source project for Agent evaluation created by researchers in **Westlake Auto Lab** and **CAIRI Lab**. We encourage researchers interested in LLM Agent and other related fields to contribute to this project!
+`BioKGBench` is an open-source project for Agent evaluation created by researchers in **AutoLab** and **CAIRI Lab** from Westlake University. We encourage researchers interested in LLM Agent and other related fields to contribute to this project!
 
 ## Citation
   **# TODO**
