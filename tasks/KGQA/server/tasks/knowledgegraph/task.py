@@ -7,7 +7,6 @@ from typing import List, Tuple, Dict, Any
 from .api import *
 from ...task import Task, Session
 from ....typings import TaskSampleExecutionResult, TaskOutput, SampleIndex, AgentOutputStatus, SampleStatus
-from ....utils import ColorMessage
 
 
 def extract_params(data, function_name):
@@ -16,7 +15,6 @@ def extract_params(data, function_name):
     if not match:
         return "Function call not found."
 
-    # 从函数名后的第一个左括号开始
     params_str = match.group(1)
     params = []
     depth = 0
@@ -30,24 +28,19 @@ def extract_params(data, function_name):
         elif char == ')':
             depth -= 1
             if depth == 0:
-                # 我们找到了一个顶层参数
                 params.append(params_str[start:i])
                 start = i + 1
         elif char == ',' and depth == 0:
-            # 如果我们在顶层遇到逗号，那么之前的参数已经结束
             if start != i:
                 params.append(params_str[start:i])
             start = i + 1
 
     try:
-        # 直接解析params_str，因为它已经是一个列表格式的字符串
         params = ast.literal_eval(params_str)
         if isinstance(params, list):
             params = [params]
         return list(params)
-        # return list(params)
     except Exception as e:
-        # 如果解析失败，尝试将参数字符串转换为一个完整的列表
         try:
             params = ast.literal_eval(f"[{params_str}]")
             if isinstance(params, list):
@@ -241,7 +234,6 @@ class KnowledgeGraph(Task):
                 find_action = False
                 for line in lines:
                     execution_message = "Function is not executed!"
-                    # if re.match(r"Action.*?:", line):
                     find_action = True
                     function_names = re.findall(r'(\w+)\(', line)
                     function_executed = False
@@ -250,17 +242,7 @@ class KnowledgeGraph(Task):
                         try:
                             func = getattr(sys.modules[__name__], function_name)
                             arguments = extract_params(line, function_name)
-                            ori_arguments = [str(argument) for argument in arguments]
-                            # # process the arguments
-                            # for i, argument in enumerate(arguments): 
-                            #     argument = argument.replace("variable ", "")  # not clear about this
-                            #     argument = argument.replace("Variable ", "")
-
-                            #     if argument.startswith("#"):
-                            #         # replace the variable with the actual value
-                            #         arguments[i] = variables_list[int(argument[1:])]   # not clear about this, where variables_list is given value?
-                            #     elif argument in entities:
-                            #         arguments[i] = entities[argument]                                       
+                            ori_arguments = [str(argument) for argument in arguments]                                    
                             execution, execution_message = func(*arguments)
                             actions.append(f"{function_name}({', '.join(ori_arguments)})")
                             session.inject({"role": "user", "content": execution_message})
@@ -271,10 +253,6 @@ class KnowledgeGraph(Task):
                             traceback.print_exc()
                             try:
                                 execution_message = f"{function_name}({', '.join(ori_arguments)}) cannot be executed: {e}"
-                                # if function_name != "intersection":
-                                #     execution_message = f"{function_name}({', '.join(ori_arguments)}) cannot be executed. You may make a mistake and need to fix it."
-                                # else: # not clear about the following execution_message, why "the two variables"?
-                                #     execution_message = f"{function_name}({', '.join(ori_arguments)}) cannot be executed. The two variables are not of the same type. You may further explore them by call get_relations"
                             except UnboundLocalError:
                                 execution_message = f"I may make a syntax error when calling {function_name} (e.g., unmatched parenthesis). I need to fix it and reuse the tool"
                             continue
@@ -290,21 +268,3 @@ class KnowledgeGraph(Task):
         return TaskSampleExecutionResult(status=finish_reason, result={"predict": answer, "actions":actions})
     
 
-if __name__ == "__main__":
-    data: List[Tuple[dict, set]] = []
-    inputs: List[dict] = []
-    targets: List[set] = []
-    data_file = "data/knowledgegraph/std.json"
-    with open(data_file, "r") as f:
-        data_object = json.load(f)
-    for item in data_object:
-        answer = item.pop("answer")
-        gold_answer = set()
-        for a in answer:
-            gold_answer.add(a["answer_id"])  # compare the id of entity during evaluation
-        data.append((item, gold_answer)) # input and target
-        inputs.append(item)
-        targets.append(gold_answer)
-    print("data: ", data)
-    print("inputs: ", inputs)
-    print("targets: ", targets)

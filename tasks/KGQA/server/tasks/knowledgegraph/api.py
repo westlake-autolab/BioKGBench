@@ -196,30 +196,7 @@ def get_union_agent(*args: List[str]) -> Tuple[List[str], str]:
     return unioned_elements, f"Observation: {json_result}"
 
 if __name__ == "__main__":
-    # pass
-    # e_list =["Q3KR16", "Q9Y6J0", "wrong", "O15225"]
-    # e_list = ["wrong"]
-    # type = "Protein"
-    # print(get_entity_types_by_ids_agent(e_list))
-    
-    # print(get_neighbor_with_type_agent(["Q6ZVE7"], 'ASSOCIATED_WITH', 'outgoing', 'Biological_process'))
-    
-    # print(get_intersection_agent(["as",'wq'],['as','er']))
+    # test tools here
     print(get_neighbor_with_type_agent(['GOLT1A'], 'TRANSLATED_INTO', 'outgoing', 'Protein'))
-    # print(get_neighbor_with_type_agent(['Q8TEV9'], 'ACTS_ON', 'outgoing', 'Protein')[1])
-    # print(get_neighbor_type_agent(e_list, 'ACTS_ON', 'Outgoing'))
-    # print(get_neighbor_with_type_agent(e_list, 'ACTS_ON', 'Outgoing', 'Protein'))
-    # print(get_entity_types_by_ids_agent(e_list))
-    # entity_name = "Q3KR16"
-    # # print(get_relations_by_id(entity_name))
-    # match = get_neighbor(entity_name, "TRANSLATED_INTO", "incoming")
-    # print(match)
-
-    # relation=dict({'type1': 'Functional_region', 'relation': 'FOUND_IN_PROTEIN', 'type2': 'Protein'})
-    # matched_entities = get_neighbor("Protein", entity_name,relation)
-    # print(matched_entities)
-    # attributes = get_all_attributes(entity_name)
-    # for attr in attributes:
-    #     print(attr)
 
 

@@ -107,7 +107,6 @@ class TaskWorker:
 
     async def update_task_config(self, name: str):
         conf = ConfigLoader().load_from(f"configs/tasks/{name}.yaml")
-        # asyncio_task = InstanceFactory.model_validate(conf[name]).create()
         asyncio_task = InstanceFactory.parse_obj(conf[name]).create()
         self.task = asyncio_task
         update_content = {"name": asyncio_task.name, "concurrency": asyncio_task.concurrency, "indices": asyncio_task.get_indices()}
