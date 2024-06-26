@@ -4,19 +4,17 @@ concurrency:
   task:
     kg-std: 5
   agent:
-    # gpt-3.5-turbo-0613: 5
-    # claude-3-opus-20240229: 5
+    gpt-3.5-turbo-0613: 5
     # gpt-4: 2
     # glm-4: 5
-    local_model: 5
+    # local_model: 5
 
-assignments: # List[Assignment] | Assignment
-  - agent: # "task": List[str] | str ,  "agent": List[str] | str
-      # - gpt-3.5-turbo-0613
-      # - claude-3-opus-20240229
+assignments:
+  - agent:
+      - gpt-3.5-turbo-0613
       # - gpt-4
       # - glm-4
-      - local_model
+      # - local_model
 
     task:
       - kg-std
