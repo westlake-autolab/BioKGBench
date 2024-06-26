@@ -30,8 +30,8 @@ class Assigner:
         self.task_indices: Dict[str, List[SampleIndex]] = {}
         self.task_worker_fail_count: Dict[str, int] = {}
         self.assignment_lock = threading.Lock()
-        self.remaining_tasks: Dict[str, Dict[str, List[int]]] = {}  # {agent: {task: [index]}}
-        self.completions: Dict[str, Dict[str, List[TaskOutput]]] = {}  # {agent: {task: [{index: int, result: JSONSerializable}]}}
+        self.remaining_tasks: Dict[str, Dict[str, List[int]]] = {}
+        self.completions: Dict[str, Dict[str, List[TaskOutput]]] = {}
         self.finished_count = 0
         self.started_count = 0
         self.running_count = 0
@@ -53,16 +53,13 @@ class Assigner:
             if os.path.exists(result_file):
                 continue
             if agent not in self.remaining_tasks:
-                # print(f"na {agent} not in {self.remaining_tasks}")
                 self.remaining_tasks[agent] = {}
             if task not in self.remaining_tasks[agent]:
-                # print(f"na {task} not in {self.remaining_tasks[agent]}")
                 self.remaining_tasks[agent][task] = []
             if task not in self.tasks:
                 print(ColorMessage.green(f"creating {task} client..."))
                 self.tasks[task] = self.config.definition.task[task].create()
                 self.task_indices[task] = self.tasks[task].get_indices()
-                # print("Na task indices: ", self.task_indices[task])
             self.remaining_tasks[agent][task] = self.task_indices[task].copy()
             if not os.path.exists(runs_file):   
                 continue
@@ -73,7 +70,6 @@ class Assigner:
                         run.pop("time")
                         index = run.pop("index")
                         assert index is not None
-                        # run = TaskClientOutput.model_validate(run)
                         run = TaskClientOutput.parse_obj(run)
                         assert isinstance(run.output, TaskOutput)
                     except:
@@ -138,10 +134,10 @@ class Assigner:
         task_node_index = {}
         for agent in self.agents:
             node_list.append(agent)
-            agent_node_index[agent] = len(node_list) - 1 # from 2
+            agent_node_index[agent] = len(node_list) - 1
         for task in self.tasks:
             node_list.append(task)
-            task_node_index[task] = len(node_list) -1 # from 2
+            task_node_index[task] = len(node_list) -1
 
         while True:
 
@@ -405,7 +401,6 @@ if __name__ == "__main__":
 
     loader = ConfigLoader()
     config_ = loader.load_from(args.config)
-    # value = AssignmentConfig.model_validate(config_)
     value = AssignmentConfig.parse_obj(config_)
     value = AssignmentConfig.post_validate(value)
 

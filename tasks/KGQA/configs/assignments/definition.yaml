@@ -3,7 +3,7 @@ definition:
     overwrite:
       module: tasks.KGQA.client.TaskClient
       parameters:
-        controller_address: "http://localhost:7624/api"  # 7624 is for debug, 7623 is for formal usage.
+        controller_address: "http://<YOUR_SERVER_IP>:<YOUR_PORT>/api"
     import: ../tasks/kg.yaml
   agent:
     import:
