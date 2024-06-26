@@ -45,7 +45,6 @@ class TaskClient:
             print(ColorMessage.yellow(f"task {self.name} not found in the worker_list."))
             return 0
         concurrency = 0
-        # print(ColorMessage.na(f"response[self.name]['workers'].values(): {response[self.name]['workers'].values()}"))
         for worker in response[self.name]["workers"].values():
             if worker["status"] == WorkerStatus.ALIVE:
                 concurrency += worker["capacity"] - worker["current"]
@@ -72,19 +71,14 @@ class TaskClient:
         response = response.json()
         sid = response["session_id"]
         latest_response = response
-        # print(ColorMessage.na("Finish starting samples and response's history: "))
-        # print("response['output']['history']", response["output"]["history"])
         while SampleStatus(response["output"]["status"]) == SampleStatus.RUNNING:
             try:
                 content = agent.inference(response["output"]["history"])
                 agent_response = AgentOutput(content=content)
-                # print(ColorMessage.na("agent output: "+agent_response.content+", agent status: "+agent_response.status))
                 
             except AgentContextLimitException:
                 agent_response = AgentOutput(status=AgentOutputStatus.AGENT_CONTEXT_LIMIT)
-                print(ColorMessage.na("AgentOutputStatus.AGENT_CONTEXT_LIMIT!!!"))
             except Exception as e:
-                # print(ColorMessage.na("Exception here!!!"))
                 if hasattr(agent, "model_name"):
                     model_name = agent.model_name
                 elif hasattr(agent, "name"):
@@ -102,7 +96,6 @@ class TaskClient:
                     output = latest_response,
                 )
             try:
-                # print(ColorMessage.na("start interacting..."))
                 response = requests.post(
                     self.controller_address + "/interact",
                     json=InteractRequest(

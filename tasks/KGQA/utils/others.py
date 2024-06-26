@@ -16,7 +16,3 @@ class ColorMessage:
     def yellow(msg):
         return "\033[93m" + msg + "\033[0m"
     
-    ## only for debug, delete later
-    @staticmethod
-    def na(msg):
-        return "\033[94m" + msg + "\033[0m"

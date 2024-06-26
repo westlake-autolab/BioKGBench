@@ -215,7 +215,6 @@ class KnowledgeGraph(Task):
             else:
                 session.inject({"role": "agent", "content": shot})
         session.inject({"role": "user", "content": "A new question: " + question})
-        print(ColorMessage.na("Question: " + question))
 
         finish_reason = SampleStatus.COMPLETED
         for i in range(self.round):
@@ -228,23 +227,17 @@ class KnowledgeGraph(Task):
             message = message.split("Observation:")[0]
             message = message.replace("\\_", "_")  # not clear about this
             session.history[-1].content = message
-            print(ColorMessage.na("Agent Response: "+ ' '.join(message.split("\n"))))
             final_answer = re.findall(r'\{"Answer":.*?\}', message)
 
             if final_answer:
-                # print(ColorMessage.na("in knowledgegraph/task.py final_answer..."))
-                # answer = re.split(r'\s*,\s*', final_answer[0])
                 answer = eval(final_answer[0])["Answer"]
                 if isinstance(answer, str):
                     answer = [answer]
-                print(ColorMessage.na("final_answer: "))
                 print(answer)
                 break
 
             else:
-                # print(ColorMessage.na("in knowledgegraph/task.py else(not final answer)..."))
                 lines = [' '.join(message.split("\n"))]
-                # print(ColorMessage.na("lines: "+lines))
                 find_action = False
                 for line in lines:
                     execution_message = "Function is not executed!"
@@ -253,14 +246,10 @@ class KnowledgeGraph(Task):
                     function_names = re.findall(r'(\w+)\(', line)
                     function_executed = False
                     for function_name in function_names:
-                        print(ColorMessage.na("Find funtion and function name is "))
                         print(function_name)
                         try:
                             func = getattr(sys.modules[__name__], function_name)
                             arguments = extract_params(line, function_name)
-
-                            print(ColorMessage.na("arguments: "))
-                            print(arguments)
                             ori_arguments = [str(argument) for argument in arguments]
                             # # process the arguments
                             # for i, argument in enumerate(arguments): 
@@ -275,13 +264,11 @@ class KnowledgeGraph(Task):
                             execution, execution_message = func(*arguments)
                             actions.append(f"{function_name}({', '.join(ori_arguments)})")
                             session.inject({"role": "user", "content": execution_message})
-                            print(ColorMessage.na("Action executed successfully. Observation: " + execution_message))
                             function_executed = True
                             break # at most one function is executed in one turn
                         except Exception as e:
                             import traceback
                             traceback.print_exc()
-                            print(ColorMessage.na("Something goes wrong when execute function."))
                             try:
                                 execution_message = f"{function_name}({', '.join(ori_arguments)}) cannot be executed: {e}"
                                 # if function_name != "intersection":
@@ -290,16 +277,13 @@ class KnowledgeGraph(Task):
                                 #     execution_message = f"{function_name}({', '.join(ori_arguments)}) cannot be executed. The two variables are not of the same type. You may further explore them by call get_relations"
                             except UnboundLocalError:
                                 execution_message = f"I may make a syntax error when calling {function_name} (e.g., unmatched parenthesis). I need to fix it and reuse the tool"
-                            # print(ColorMessage.na(execution_message))
                             continue
                     if not function_executed:
                         session.inject({"role": "user", "content": execution_message})
-                        print(ColorMessage.na("'role': 'user', 'content': "+execution_message))
                     break # should at most be one line starts with Action
 
                 if not find_action:
                     session.inject({"role": "user", "content": "No executable function found! Need to recheck the action."})
-                    print(ColorMessage.na("Fail to find action."))
         else:
             finish_reason = SampleStatus.TASK_LIMIT_REACHED
 

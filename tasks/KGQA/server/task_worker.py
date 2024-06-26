@@ -186,8 +186,6 @@ class TaskWorker:
                 "session_id": parameters.session_id,
                 "output": response.dict(),
             })
-        # print(ColorMessage.na("session_id: "+str(parameters.session_id)+", output: "))
-        # print(response.dict())
         return {
             "session_id": parameters.session_id,
             "output": response.dict(),
