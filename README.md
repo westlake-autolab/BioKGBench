@@ -149,17 +149,16 @@ You need to modify the configuration file `llm_config.yml` in the `config` folde
   python -m tasks.KGCheck.evalutation.evaluate --history_file results/kgcheck/log_1718880808.620556.txt --golden_answer_file data/kgcheck/dev.json
   ```
 * `KGQA`:   
-  change config  
-  ```
-  update task config: tasks/KGQA/configs/tasks/kg.yaml, change data path as your own path.  
-  make agent config file: tasks/KGQA/configs/agents/*.yaml, choose one of these agents or make your own agent.
-  update llm config: tasks/KGQA/configs/assignments/default.yaml, change agent if you make you won.
-  ``` 
-  start contoller and worker  
+  In this section, we reference the evaluation framework of AgentBench.
+  First, modify the configuration files under tasks/KGQA/configs:
+  1. You can modify the data path in the tasks/KGQA/configs/tasks/kg.yaml file. The default path is data/kgqa/test.json.
+  2. In the configuration files under tasks/KGQA/configs/agents, configure your agent. We have provided template configuration files for the OpenAI model, ChatGLM, and locally deployed models using vLLM. Please fill in the corresponding API Key for API-based LLMs or the address of your locally deployed model for OSS LLMs.
+  3. Fill in the corresponding IP and port in tasks/KGQA/configs/assignments/definition.yaml, and modify the task configuration in tasks/KGQA/configs/assignments/default.yaml. By default, `gpt-3.5-turbo-0613` will be evaluated.
+  Then start the task server. Make sure the ports you use are available.
   ```bash
   python -m tasks.KGQA.start_task -a
   ```
-  Open another terminal and run:
+  If the terminal shows ".... 200 OK", you can open another terminal and start the assigner:
   ```bash
   python -m tasks.KGQA.assigner
   ```
