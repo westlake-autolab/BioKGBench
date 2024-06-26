@@ -48,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--auto-controller", "-a", dest="controller", action="store_true"
     )
-    parser.add_argument("--base-port", "-p", dest="port", type=int, default=6001)  # 6001 is for debug, 5001 is for formal usage.
+    parser.add_argument("--base-port", "-p", dest="port", type=int, default=5001)
   
     args = parser.parse_args()
 
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         
         controller_addr = config["controller"]
     else:
-        controller_addr = f"http://localhost:7624/api"
+        controller_addr = f"http://localhost:5000/api"
         
     controller_port = controller_addr.split(":")[2].split("/")[0]
 
