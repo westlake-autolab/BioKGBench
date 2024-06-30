@@ -125,6 +125,12 @@ git lfs pull
 ```
 
 **Building Knowledge Graph**: 
+* Start neo4j  
+By default, we download the data to the `data/bioKG` folder, and start neo4j using docker.
+  ```bash
+  docker run -d --name neo4j -p 7474:7474 -p 7687:7687 -v $PWD/data/bioKG:/var/lib/neo4j/import neo4j:4.2.3
+  ```
+
 * Config  
 You need to modify the configuration file `kg_config.yml` in the `config` folder. 
 
