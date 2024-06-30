@@ -49,9 +49,9 @@ class SCVEmbeddings(BaseModel, Embeddings):
     def _embed(self, texts: List[str]) -> List[List[float]]:
         outputs = []
         for text in texts:
-            # Call Jina AI Embedding API
-            # resp = requests.post("http://localhost:7005/embeddings", json={"texts": texts})
-            resp = requests.post("http://10.0.1.196:17000/embedding", json={"texts": [text]})
+            # Call Jina Embedding API
+            resp = requests.post("http://localhost:7005/embeddings", json={"texts": texts})
+            # resp = requests.post("http://10.0.1.196:17000/embedding", json={"texts": [text]})
             resp.raise_for_status()
             resp = resp.json()
             if "embeddings" not in resp:

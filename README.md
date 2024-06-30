@@ -117,11 +117,9 @@ You need to modify the configuration file in the `config` folder, including `kg_
   ```
 * `KGQA`:   
   change config  
-  ```
-  update task config: tasks/KGQA/configs/tasks/kg.yaml, change data path as your own path.  
-  make agent config file: tasks/KGQA/configs/agents/*.yaml, choose one of these agents or make your own agent.
-  update llm config: tasks/KGQA/configs/assignments/default.yaml, change agent if you make you won.
-  ``` 
+  **tasks/KGQA/configs/tasks/kg.yaml**: update task config, change data path as your own path.  
+  **tasks/KGQA/configs/agents/*.yaml**: make agent config file, choose one of these agents or make your own agent.  
+  **tasks/KGQA/configs/assignments/default.yaml**: update llm config, change agent if you make you won.
   start contoller and worker  
   ```bash
   python -m tasks.KGQA.start_task -a
