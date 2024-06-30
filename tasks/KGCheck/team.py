@@ -52,28 +52,6 @@ def get_receiver(content: str) -> Union[bool, str]:
             return False, "You should specify the receiver before you assign task. Please regenerate your message and it should start by 'sender, ' where sender is the one you assign task to ."
         return True, temp_
     
-def parse_content(raw: List[Tuple[str, str]]) -> List[Dict[str, str]]:
-    res = []
-    for k in raw:
-        res.append({'role':k[0], 'content':k[1]})
-    return res
-
-def read_write(data, path):
-    with open(path, 'a+', encoding='utf-8') as ff:
-        json.dump(data, ff)
-
-def save_answer(m_le, m_kg, m_va):
-    
-    mm_le = parse_content(m_le)
-    mm_kg = parse_content(m_kg)
-    mm_va = parse_content(m_va)
-
-    print(mm_le, mm_kg, mm_va)
-    raise SystemExit
-    
-    # read_write(mm_le, fp_leader)
-    # read_write(mm_kg, fp_kg)
-    # read_write(mm_va, fp_validation)
 
 class assist_agent:
     '''
@@ -211,19 +189,10 @@ def main(task: str):
         print(s)
         print('---')
         logging.info(s)
-        if 'team_leader' in s.keys():
-            if s['team_leader']['receiver'] == 'FINISH':
-                save_answer(team_leader.memory,
-                            kg_agent.memory,
-                            validation_agent.memory)
 
 if __name__ == '__main__':
 
     os.makedirs('results/kgcheck', exist_ok=True)
-    
-    fp_leader = ''
-    fp_kg = ''
-    fp_validation = ''
 
     parser = argparse.ArgumentParser(description='Task KGCheck')
     parser.add_argument('--data_file', '-d', type=str, help='The path to the data file', required=True)
@@ -238,6 +207,8 @@ if __name__ == '__main__':
 
     for element in tqdm(data):
         instruction = element['instruction']
+        with open(args.log_file, 'a') as f:
+            f.write('\n' + instruction + '\n')
         main(instruction)
         with open(args.log_file, 'a') as f:
             f.write('\n')

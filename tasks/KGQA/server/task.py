@@ -23,7 +23,6 @@ class SessionController:
     ) -> TaskOutput:
         async with self.agent_lock:
             if env_input is not None:
-                # print(ColorMessage.na("In agent_pull, and env_input is not None: "+env_input.content))
                 self.env_input = env_input
                 self.env_signal.release()
             print("acquiring agent signal")
@@ -153,7 +152,6 @@ class Session:
                 role="agent", content=agent_response.content or agent_response.status
             )
         )
-        # print(ColorMessage.na("Added ChatHistoryItem: role: 'agent', content: "+agent_response.content+" , agent status: "+agent_response.status))
         return agent_response
 
 

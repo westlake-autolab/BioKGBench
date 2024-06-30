@@ -8,9 +8,9 @@ A Knowledge Graph Checking Benchmark of AI Agent for Biomedical Science.
 </p>
 
 ## Introduction
-Pursuing artificial intelligence for biomedical science, a.k.a. AI Scientist, draws increasing attention, where one common approach is to build a copilot agent driven by Large Language Models~(LLMs).   
-However, to evaluate such systems, people either rely on direct Question-Answering~(QA) to the LLM itself, or in a biomedical experimental manner. How to precisely benchmark biomedical agents from an AI Scientist perspective remains largely unexplored. To this end, we draw inspiration from one most important abilities of scientists, understanding the literature, and introduce `BioKGBench`.   
-In contrast to traditional evaluation benchmark that only focuses on factual QA, where the LLMs are known to have hallucination issues, we first disentangle **Understanding Literature** into two atomic abilities, i) **Understanding** the unstructured text from research papers by performing scientific claim verification, and ii) Ability to interact with structured Knowledge-Graph Question-Answering~(KGQA) as a form of **Literature** grounding. We then formulate a novel agent task, dubbed KGCheck, using KGQA and domain-based Retrieval-Augmented Generation (RAG) to identify the factual errors of existing large-scale knowledge graph databases.   We collect over two thousand data for two atomic tasks and 225 high-quality annotated data for the agent task. Surprisingly, we discover that state-of-the-art agents, both daily scenarios and biomedical ones, have either failed or inferior performance on our benchmark. We then introduce a simple yet effective baseline, dubbed `BKGAgent`. On the widely used popular dataset, we discover over 90 factual errors which yield the effectiveness of our approach, yields substantial value for both the research community or practitioners in the biomedical domain.
+Pursuing artificial intelligence for biomedical science, a.k.a. AI Scientist, draws increasing attention, where one common approach is to build a copilot agent driven by Large Language Models (LLMs).   
+However, to evaluate such systems, people either rely on direct Question-Answering (QA) to the LLM itself, or in a biomedical experimental manner. How to precisely benchmark biomedical agents from an AI Scientist perspective remains largely unexplored. To this end, we draw inspiration from one most important abilities of scientists, understanding the literature, and introduce `BioKGBench`.   
+In contrast to traditional evaluation benchmark that only focuses on factual QA, where the LLMs are known to have hallucination issues, we first disentangle **Understanding Literature** into two atomic abilities, i) **Understanding** the unstructured text from research papers by performing scientific claim verification, and ii) Ability to interact with structured Knowledge-Graph Question-Answering (KGQA) as a form of **Literature** grounding. We then formulate a novel agent task, dubbed KGCheck, using KGQA and domain-based Retrieval-Augmented Generation (RAG) to identify the factual errors of existing large-scale knowledge graph databases.   We collect over two thousand data for two atomic tasks and 225 high-quality annotated data for the agent task. Surprisingly, we discover that state-of-the-art agents, both daily scenarios and biomedical ones, have either failed or inferior performance on our benchmark. We then introduce a simple yet effective baseline, dubbed `BKGAgent`. On the widely used popular dataset, we discover over 90 factual errors which yield the effectiveness of our approach, yields substantial value for both the research community or practitioners in the biomedical domain.
 
 ## Code Structure
 ```
@@ -18,7 +18,7 @@ Agent4S-BioKG
 |-- assets
 |   `-- img
 |-- config
-|   |-- kg_config.yml                               # config for build kg and connect to neo4g
+|   |-- kg_config.yml                               # config for build kg and connect to neo4j
 |   `-- llm_config.yml                              # config for llm
 |-- data
 |   |-- bioKG                                       # dataset for build kg
@@ -66,8 +66,15 @@ Agent4S-BioKG
 
 </details>
 
-<details close>
-<summary>Baseline</summary>
+<details open>
+<summary>Evaluation</summary>
+
+* **Atomic Abilities (KGQA & SCV)**
+![atomic evaluation](/assets/img/atomic_evaluation.png "atomic evaluation")
+
+* **KGCheck - BKGAgent**
+![kgcheck evaluation](/assets/img/kgcheck_evaluation.png "kgcheck evaluation")
+
 </details>
 
 
@@ -75,12 +82,35 @@ Agent4S-BioKG
 [2024-06-06] `BioKGBench` v0.1.0 is released.
 
 ## Installation
-This project has provided an environment setting file of conda, users can easily reproduce the environment by the following commands:
-```bash
-conda create -n agent4s-biokg python=3.10
-conda activate agent4s-biokg
-pip install -r requirements.txt
-```
+* This project has provided an environment setting file of conda, users can easily reproduce the environment by the following commands:
+  ```bash
+  conda create -n agent4s-biokg python=3.10
+  conda activate agent4s-biokg
+  pip install -r requirements.txt
+  ```
+* Important Note about KG
+  * Building this knowledge graph (KG) locally requires at least 26GB of disk space.
+  * We provide the TSV files for constructing the KG in the `data/bioKG` directory. These files are parsed from the following databases. The databases have their own licenses, and the use of the KG and data files still requires compliance with these data use restrictions. Please, visit the data sources directly for more information:
+
+  | Source type             | Source                              | URL                                                   | Reference                               |
+  |-------------------------|-------------------------------------|-------------------------------------------------------|------------------------------------------|
+  | Database                | UniProt                             | [https://www.uniprot.org/](https://www.uniprot.org/)   | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/29425356) |
+  | Database                | TISSUES                             | [https://tissues.jensenlab.org/](https://tissues.jensenlab.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/29617745) |
+  | Database                | STRING                              | [https://string-db.org/](https://string-db.org/)       | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30476243) |
+  | Database                | SMPDB                               | [https://smpdb.ca/](https://smpdb.ca/)                 | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/24203708) |
+  | Database                | SIGNOR                              | [https://signor.uniroma2.it/](https://signor.uniroma2.it/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/31665520) |
+  | Database                | Reactome                            | [https://reactome.org/](https://reactome.org/)         | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/31691815) |
+  | Database                | Intact                              | [https://www.ebi.ac.uk/intact/](https://www.ebi.ac.uk/intact/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/24234451) |
+  | Database                | HGNC                                | [https://www.genenames.org/](https://www.genenames.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30304474) |
+  | Database                | DisGeNET                            | [https://www.disgenet.org/](https://www.disgenet.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/25877637) |
+  | Database                | DISEASES                            | [https://diseases.jensenlab.org/](https://diseases.jensenlab.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/25484339) |
+  | Ontology                | Disease Ontology                    | [https://disease-ontology.org/](https://disease-ontology.org/) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/30407550) |
+  | Ontology                | Brenda Tissue Ontology              | [https://www.brenda-enzymes.org/ontology.php?ontology_id=3](https://www.brenda-enzymes.org/ontology.php?ontology_id=3) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/25378310) |
+  | Ontology                | Gene Ontology                       | [http://geneontology.org/](http://geneontology.org/)   | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/27899567) |
+  | Ontology                | Protein Modification Ontology       | [https://www.ebi.ac.uk/ols/ontologies/mod](https://www.ebi.ac.uk/ols/ontologies/mod) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/23482073) |
+  | Ontology                | Molecular Interactions Ontology     | [https://www.ebi.ac.uk/ols/ontologies/mi](https://www.ebi.ac.uk/ols/ontologies/mi) | [PubMed](https://www.ncbi.nlm.nih.gov/pubmed/23482073) |
+
+
 
 ## Getting Started
 
@@ -94,14 +124,17 @@ cd data
 git lfs pull
 ```
 
-**Building Knowledge Graph**:  
-```bash
-# TODO
-```
+**Building Knowledge Graph**: 
+* Config  
+You need to modify the configuration file `kg_config.yml` in the `config` folder. 
+
+  ```bash
+  python -m tasks.utils.kg.graphdb_builder.builder
+  ```
 
 **Running Baseline**:
 * Config  
-You need to modify the configuration file in the `config` folder, including `kg_config.yml`, and `llm_config.yml`.
+You need to modify the configuration file `llm_config.yml` in the `config` folder.
 
 * `KGCheck`:  
   run experiment  
@@ -116,15 +149,18 @@ You need to modify the configuration file in the `config` folder, including `kg_
   python -m tasks.KGCheck.evalutation.evaluate --history_file results/kgcheck/log_1718880808.620556.txt --golden_answer_file data/kgcheck/dev.json
   ```
 * `KGQA`:   
-  change config  
-  **tasks/KGQA/configs/tasks/kg.yaml**: update task config, change data path as your own path.  
-  **tasks/KGQA/configs/agents/*.yaml**: make agent config file, choose one of these agents or make your own agent.  
-  **tasks/KGQA/configs/assignments/default.yaml**: update llm config, change agent if you make you won.
-  start contoller and worker  
+  In this section, we reference the evaluation framework of AgentBench.
+
+  First, modify the configuration files under `tasks/KGQA/configs`:
+  1. You can modify the data path in the `tasks/KGQA/configs/tasks/kg.yaml` file. The default path is `data/kgqa/test.json`.
+  2. In the configuration files under `tasks/KGQA/configs/agents`, configure your agent. We have provided template configuration files for the OpenAI model, ChatGLM, and locally deployed models using vLLM. Please fill in the corresponding API Key for API-based LLMs or the address of your locally deployed model for OSS LLMs.
+  3. Fill in the corresponding IP and port in `tasks/KGQA/configs/assignments/definition.yaml`, and modify the task configuration in `tasks/KGQA/configs/assignments/default.yaml`. By default, `gpt-3.5-turbo-0613` will be evaluated.
+
+  Then start the task server. Make sure the ports you use are available.
   ```bash
   python -m tasks.KGQA.start_task -a
   ```
-  Open another terminal and run:
+  If the terminal shows ".... 200 OK", you can open another terminal and start the assigner:
   ```bash
   python -m tasks.KGQA.assigner
   ```
@@ -144,7 +180,7 @@ You need to modify the configuration file in the `config` folder, including `kg_
 
 ## Acknowledgement
 
-`BioKGBench` is an open-source project for Agent evaluation created by researchers in **Westlake Auto Lab** and **CAIRI Lab**. We encourage researchers interested in LLM Agent and other related fields to contribute to this project!
+`BioKGBench` is an open-source project for Agent evaluation created by researchers in **AutoLab** and **CAIRI Lab** from Westlake University. We encourage researchers interested in LLM Agent and other related fields to contribute to this project!
 
 ## Citation
   **# TODO**
