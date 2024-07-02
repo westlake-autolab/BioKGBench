@@ -196,7 +196,7 @@ def get_union_agent(*args: List[str]) -> Tuple[List[str], str]:
     return unioned_elements, f"Observation: {json_result}"
 
 if __name__ == "__main__":
-    # test tools here
+    ## test tools here
     print(get_neighbor_with_type_agent(['GOLT1A'], 'TRANSLATED_INTO', 'outgoing', 'Protein'))
 
 
