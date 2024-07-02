@@ -205,7 +205,6 @@ If you find our work helpful, please use the following citations.
       url={https://arxiv.org/abs/2407.00466}, 
 }
 ```
-  **# TODO**
 
 ## 📧 Contact
 For adding new features, looking for helps, or reporting bugs associated with `BioKGBench`, please open a [GitHub issue](https://github.com/A4Bio/ProteinInvBench/issues) and [pull request](https://github.com/A4Bio/ProteinInvBench/pulls) with the tag `new features`, `help wanted`, or `enhancement`. Feel free to contact us through email if you have any questions.
