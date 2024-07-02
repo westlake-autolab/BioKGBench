@@ -18,14 +18,12 @@ IMPORT_ONTOLOGY_DATA:
     'description': "Creates all the onotology nodes and has parent relationships"
     'query': >
         CREATE CONSTRAINT ON (e:ENTITY) ASSERT e.id IS UNIQUE;
-        CREATE INDEX ON :ENTITY(name);  
-        USING PERIODIC COMMIT 10000
+        CREATE INDEX FOR (n:ENTITY) ON (n.name);  
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/ENTITY.tsv" AS line
         FIELDTERMINATOR '\t'
         MERGE (e:ENTITY {id:line.ID})
         ON CREATE SET e.name=line.name,e.description=line.description,e.type=line.type,e.synonyms=SPLIT(line.synonyms,',')
         RETURN COUNT(e) AS c;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/ENTITY_has_parent.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (e1:ENTITY{id:line.START_ID})
@@ -33,25 +31,52 @@ IMPORT_ONTOLOGY_DATA:
         MERGE (e1)-[r:HAS_PARENT]->(e2)
         RETURN COUNT(r) AS c;
 
+IMPORT_PROTEIN_DATA:
+    'name': "import protein data"
+    'description': "Creates Protein and Peptide nodes, their relationship and relationships to Gene and Transcript nodes"
+    'query': >
+        CREATE INDEX FOR (n:Protein) ON (n.name);
+        CREATE INDEX FOR (n:Protein) ON (n.accession);
+        CREATE CONSTRAINT ON (p:Protein) ASSERT p.id IS UNIQUE;
+        LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Protein.tsv" AS line
+        FIELDTERMINATOR '\t'
+        MERGE (p:Protein {id:line.ID})
+        ON CREATE SET p.accession=line.accession,p.name=line.name,p.description=line.description,p.taxid=line.taxid,p.synonyms=SPLIT(line.synonyms,',');
+        CREATE CONSTRAINT ON (a:Amino_acid_sequence) ASSERT a.id IS UNIQUE;
+        LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Amino_acid_sequence.tsv" AS line
+        FIELDTERMINATOR '\t'
+        MERGE (aa:Amino_acid_sequence {id:line.ID})
+        ON CREATE SET aa.header=line.header,aa.sequence=line.sequence,aa.size=line.size,aa.source=line.source;
+        LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Protein_HAS_Sequence_Amino_acid_sequence.tsv" AS line
+        FIELDTERMINATOR '\t'
+        MATCH (p:Protein {id:line.START_ID})
+        MATCH (aa:Amino_acid_sequence {id:line.END_ID})
+        MERGE (p)-[r:HAS_SEQUENCE{source:line.source}]->(aa)
+        RETURN COUNT(p) AS c;
+        LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Protein_gene_translated_into.tsv" AS line
+        FIELDTERMINATOR '\t'
+        MATCH (g:Gene {id:line.START_ID})
+        MATCH (p:Protein {id:line.END_ID})
+        MERGE (g)-[r:TRANSLATED_INTO]->(p)
+        RETURN COUNT(r) AS c;
+
+
 IMPORT_PROTEIN_ANNOTATIONS:
     'name': 'import protein annotations'
     'description': 'Loads into the database all the Protein nodes annotations: Gene Ontology terms'
     'query': >
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Cellular_component_associated_with.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p:Protein {id:line.START_ID})
         MATCH (c:Cellular_component {id:line.END_ID})
         MERGE (p)-[r:ASSOCIATED_WITH{score:toFloat(line.score),source:line.source,evidence_type:line.evidence_type}]->(c)
         RETURN COUNT(r) AS c;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Molecular_function_associated_with.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p:Protein {id:line.START_ID})
         MATCH (f:Molecular_function {id:line.END_ID})
         MERGE (p)-[r:ASSOCIATED_WITH{score:toFloat(line.score),source:line.source,evidence_type:line.evidence_type}]->(f)
         RETURN COUNT(r) AS c;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Biological_process_associated_with.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p:Protein {id:line.START_ID})
@@ -64,39 +89,29 @@ IMPORT_MODIFIED_PROTEINS:
     'description': 'Creates Modified_protein nodes and loads the relationships to Modification and Protein nodes'
     'query': >
         CREATE CONSTRAINT ON (m:Modified_protein) ASSERT m.id IS UNIQUE;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/RESOURCE_Modified_protein.tsv" AS line
         FIELDTERMINATOR '\t'
         MERGE (m:Modified_protein {id:line.ID})
         ON CREATE SET m.protein=line.protein,m.position=line.position,m.residue=line.residue,m.sequence_window=line.sequence_window,m.source=line.source
         RETURN COUNT(m) AS c;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/RESOURCE_modified_protein_has_modification.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (mp:Modified_protein {id:line.START_ID})
         MATCH (m:Modification {id:line.END_ID})
         MERGE (mp)-[r:HAS_MODIFICATION{source:line.source}]->(m)
         RETURN COUNT(r) AS c;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/RESOURCE_protein_has_modified_site.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p:Protein {id:line.START_ID})
         MATCH (mp:Modified_protein {id:line.END_ID})
         MERGE (p)-[r:HAS_MODIFIED_SITE]->(mp)
         RETURN COUNT(r) AS c;
-        USING PERIODIC COMMIT 10000
-        LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/RESOURCE_substrate_is_substrate_of.tsv" AS line
-        FIELDTERMINATOR '\t'
-        MATCH (m:Modified_protein {id:line.START_ID})
-        MATCH (p:Protein {id:line.END_ID})
-        MERGE (m)-[r:IS_SUBSTRATE_OF{score:toFloat(line.score),regulation:line.regulation,source:line.source,evidence_type:line.evidence_type}]->(p)
-        RETURN COUNT(r) AS c;
+
 
 IMPORT_CURATED_PPI_DATA:
     'name': 'import curated Protein-Protein interaction data'
     'description': 'Loads into the database all the PPI from curated sources i.e. Intact database'
     'query': >
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/RESOURCE_interacts_with.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p1:Protein {id:line.START_ID})
@@ -108,7 +123,6 @@ IMPORT_PPI_ACTION:
     'name': 'import Protein-Protein interaction action data'
     'description': 'Loads all the PPI and the resulting activity of the interaction'
     'query': >
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/RESOURCE_protein_acts_on_protein.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p1:Protein {id:line.START_ID})
@@ -121,13 +135,11 @@ IMPORT_PROTEIN_STRUCTURES:
     'description': 'Creates Protein structure nodes and their relationships to Protein nodes'
     'query': >
         CREATE CONSTRAINT ON (p:Protein_structure) ASSERT p.id IS UNIQUE;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Protein_structures.tsv" AS line
         FIELDTERMINATOR '\t'
         MERGE (s:Protein_structure {id:line.ID})
         ON CREATE SET s.source=line.source,s.link=line.link
         RETURN COUNT(s) AS c;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Protein_has_structure.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p:Protein {id:line.START_ID})
@@ -135,11 +147,22 @@ IMPORT_PROTEIN_STRUCTURES:
         MERGE (p)-[r:HAS_STRUCTURE{source:line.source}]->(s)
         RETURN COUNT(r) AS c;
 
+IMPORT_GENE_DATA:
+    'name': 'import gene data'
+    'description': 'Creates the Gene nodes'
+    'query': >
+        CREATE CONSTRAINT ON (g:Gene) ASSERT g.id IS UNIQUE;
+        CREATE CONSTRAINT ON (g:Gene) ASSERT g.name IS UNIQUE;
+        LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/Gene.tsv" AS line
+        FIELDTERMINATOR '\t'
+        MERGE (g:Gene {id:line.ID})
+        ON CREATE SET g.name=line.name,g.family=line.family,g.taxid=line.taxid,g.synonyms=SPLIT(line.synonyms,',')
+        RETURN COUNT(g) AS c;
+
 IMPORT_DISEASE_DATA:
     'name': 'import Disease nodes'
     'description': 'Loads all the associations with Disease nodes extracted from several resources i.e. DisGeNET'
     'query': >
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/ENTITY_RESOURCE_associated_with.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (e:ENTITY {id:line.START_ID})
@@ -152,13 +175,11 @@ IMPORT_PATHWAY_DATA:
     'description': 'Creates the Pathway nodes and all the relationships to Protein, Drug and Metabolite nodes'
     'query': >
         CREATE CONSTRAINT ON (p:Pathway) ASSERT p.id IS UNIQUE;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/RESOURCE_Pathway.tsv" AS line
         FIELDTERMINATOR '\t'
         MERGE (p:Pathway{id:line.ID})
         ON CREATE SET p.name=line.name,p.description=line.description,p.organism=line.organism,p.linkout=line.linkout,p.source=line.source
         RETURN COUNT(p) AS c;
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/RESOURCE_protein_annotated_to_pathway.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p:Protein{id:line.START_ID})
@@ -170,7 +191,6 @@ IMPORT_JENSENLAB_DATA:
     'name': 'import jensenlab data'
     'description': 'Loads into the database all the associations from jenseblab.org: DISEASES, TISSUES, COMPARTMENTS'
     'query': >
-        USING PERIODIC COMMIT 10000
         LOAD CSV WITH HEADERS FROM "file:///IMPORTDIR/ENTITY1_ENTITY2_associated_with_integrated.tsv" AS line
         FIELDTERMINATOR '\t'
         MATCH (p:ENTITY1 {id:line.START_ID})

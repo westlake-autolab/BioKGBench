@@ -60,17 +60,19 @@ def load_into_database(driver, queries, requester):
                 matches = re.search(regex, query)
                 if matches:
                     file_path = matches.group(1)
-                    if os.path.isfile(unquote(file_path)):
+                    kg_data_path = kg_config['kg_data_path']
+                    if os.path.isfile(unquote(os.path.join(kg_data_path, file_path))):
                         result = connector.commitQuery(driver, query+";")
-                        record = result.single()
-                        if record is not None and 'c' in record:
-                            counts = record['c']
-                            if counts == 0:
-                                logger.warning("{} - No data was inserted in query: {}.\n results: {}".format(requester, query, counts))
-                            else:
-                                logger.info("{} - Query: {}.\n results: {}".format(requester, query, counts))
-                        else:
-                            logger.info("{} - cypher query: {}".format(requester, query))
+                        logger.info("{} - cypher query: {}".format(requester, query))
+                    #     record = result.single()
+                    #     if record is not None and 'c' in record:
+                    #         counts = record['c']
+                    #         if counts == 0:
+                    #             logger.warning("{} - No data was inserted in query: {}.\n results: {}".format(requester, query, counts))
+                    #         else:
+                    #             logger.info("{} - Query: {}.\n results: {}".format(requester, query, counts))
+                    #     else:
+                    #         logger.info("{} - cypher query: {}".format(requester, query))
                     else:
                         logger.error("Error loading: File does not exist. Query: {}".format(query))
             else:
@@ -169,7 +171,7 @@ def updateDB(driver, imports=None, specific=[]):
             logger.error("Loading: {}: {}, file: {}, line: {}".format(i, err, fname, exc_tb.tb_lineno))
 
 
-def SkgBuild(imports):
+def SkgBuild(imports=None):
     """
     Build a small customize KG, a subgraph of clinical knowledge graph (CKG).
     """
