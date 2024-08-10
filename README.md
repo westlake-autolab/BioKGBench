@@ -1,4 +1,4 @@
-# Agent4S-BioKG
+# BioKGBench
 A Knowledge Graph Checking Benchmark of AI Agent for Biomedical Science.
 <p align="left">
 <a href="https://github.com/westlake-autolab/Agent4S-BioKG/blob/main/LICENSE" alt="license">
@@ -18,7 +18,7 @@ In contrast to traditional evaluation benchmark that only focuses on factual QA,
 
 ## 🎯 Code Structure
 ```
-Agent4S-BioKG
+BioKGBench
 |-- assets
 |   `-- img
 |-- config
@@ -216,5 +216,4 @@ For adding new features, looking for helps, or reporting bugs associated with `B
 
 ## 📋 TODO
 
-1. Update dataset
-2. Support pip installation
+1. Support pip installation
