@@ -1,3 +1,7 @@
-base_url: "http://10.0.1.194:7010/v1"
-model: "Qwen1.5-72B-Chat"
-api_key: "sk-cairi"
+# base_url: "http://10.0.1.194:7010/v1"
+# model: "Qwen1.5-72B-Chat"
+# api_key: "sk-cairi"
+
+base_url: "https://api2.aigcbest.top/v1"
+model: "gpt-4o"
+api_key: ""

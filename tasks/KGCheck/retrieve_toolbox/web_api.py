@@ -90,4 +90,3 @@ def get_uniprot_protein_info(protein_id):
                 time.sleep(delay)
             else:
                 return f"Failed to retrieve information for protein ID: {protein_id} after {retries} attempts."
-            
