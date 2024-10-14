@@ -76,8 +76,8 @@ BioKGBench
 * **Atomic Abilities (KGQA & SCV)**
 ![atomic evaluation](/assets/img/atomic_evaluation.png "atomic evaluation")
 
-* **KGCheck - BKGAgent**
-![kgcheck evaluation](/assets/img/kgcheck_evaluation.png "kgcheck evaluation")
+* **KGCheck - BKGAgent (ours) & Other Baselines**
+![kgcheck performance](/assets/img/kgcheck_performance.png "kgcheck perfomance")
 
 </details>
 
