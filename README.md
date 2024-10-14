@@ -153,10 +153,10 @@ You need to modify the configuration file `llm_config.yml` in the `config` folde
   python -m tasks.KGCheck.agents --data_file data/kgcheck/dev.json
   ```
   evaluate  
-  **--history_file**: the path of the log file.  
+  **--result_file**: the path of the result file.  
   **--golden_answer_file**: the path of the golden answer file.
   ```bash
-  python -m tasks.KGCheck.evalutation.evaluate --history_file results/kgcheck/log_1718880808.620556.txt --golden_answer_file data/kgcheck/dev.json
+  python -m tasks.KGCheck.evaluation.evaluate --result_file results/kgcheck/results.json --golden_answer_file data/kgcheck/dev.json
   ```
 * `KGQA`:   
   In this section, we reference the evaluation framework of AgentBench.
