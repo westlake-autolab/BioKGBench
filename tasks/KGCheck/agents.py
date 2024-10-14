@@ -69,7 +69,7 @@ if __name__ == '__main__':
     os.makedirs('results/kgcheck', exist_ok=True)
     parser = argparse.ArgumentParser(description='Task KGCheck')
     parser.add_argument('--data_file', '-d', type=str, help='The path to the data file', required=True)
-    parser.add_argument('--log_file', '-l', type=str, default=f'results/kgcheck/log_{datetime.now().timestamp()}.txt', help='The path to the log file')
+    parser.add_argument('--log_file', '-l', type=str, default=f'results/kgcheck', help='The path to the log file')
 
     args = parser.parse_args()
 

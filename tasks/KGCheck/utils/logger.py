@@ -49,7 +49,7 @@ def get_logger(dir_path, name, index) -> logging.Logger:
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.DEBUG)
     
-    file_handler = logging.FileHandler(dir_path+f"{name} - {index}.log")
+    file_handler = logging.FileHandler(dir_path+f"/{name} - {index}.log")
     file_handler.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
