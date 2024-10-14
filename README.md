@@ -150,7 +150,7 @@ You need to modify the configuration file `llm_config.yml` in the `config` folde
   run experiment  
   **--data_file**: the path of the dataset file.
   ```bash
-  python -m tasks.KGCheck.team --data_file data/kgcheck/dev.json
+  python -m tasks.KGCheck.agents --data_file data/kgcheck/dev.json
   ```
   evaluate  
   **--history_file**: the path of the log file.  
