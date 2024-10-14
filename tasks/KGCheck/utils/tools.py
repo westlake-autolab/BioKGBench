@@ -9,8 +9,8 @@ from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 from requests.exceptions import ConnectionError, Timeout, HTTPError
 from typing import List, Dict
-from ....utils.kg.graphdb_connector import connector
-from ....utils.agent_fucs.fact_check import search_claim_related_docs
+from ...utils.kg.graphdb_connector import connector
+from ...utils.agent_fucs.fact_check import search_claim_related_docs
 from .logger import check_tool
 
 logger = check_tool()
